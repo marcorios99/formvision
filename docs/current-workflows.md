@@ -19,16 +19,16 @@ indica como tal.
 | `formvision compose-digit-strip` | Componer una tira aleatoria de dígitos | `data/digits/` | `data/outputs/random_digit_strip.png` y valor impreso | Base; PNGs de `export-mnist-digits` | No | Generación sintética | `DigitStripFactory` | Herramienta interna expuesta por CLI |
 | `formvision paste-digit-strip` | Pegar una tira en una imagen de formulario | Imagen de formulario y tira, por defecto en `data/outputs/` | `data/outputs/omr_sheet_with_digit_strip.png` | Base; imágenes previas | No | Generación sintética | `FormOverlay` | Paso de bajo nivel; solapado por `build_student_batch.py` |
 | `formvision inspect-layout --image ... --layout ...` | Dibujar ROIs sobre una imagen | Imagen y layout JSON | PNG de previsualización, por defecto `data/outputs/layout_preview.png` | Dependencias base | No | Creación de plantillas / inspección | `TemplateLoader`, `CoordinateMapper` | Es visualización de ROIs, no muestra etapas del pipeline |
-| `formvision process --image ... --layout ...` | Ejecutar el pipeline y exportar resultado | Imagen, layout; opcional `--template-image`, `--align` | JSON; opcional CSV y SQLite | Base; modelo MNIST si `--icr-engine mnist`; docTR si `--ocr-engine doctr` | Solo con ICR MNIST explícito | Uso normal / evaluación | `FormProcessingPipeline`, extractores y exporters | Camino principal; por defecto usa ICR/OCR deterministas basados en `demo_value` |
-| `python scripts/build_student_batch.py` | Regenerar plantilla base, 10 formularios limpios y ground truth | MNIST IDX, layout/template de demo | Sobrescribe `template/blank.png` y `layout.json`; crea `images/clean/student_*.png`, `expected/student_*.json`, `expected/student_batch.json`; usa `data/digits` | Base + archivos MNIST; no carga un modelo `.npz` | No para producir imágenes; sí requiere datos MNIST | Generación sintética | `MnistDigitExporter`, `SyntheticOmrSheetFactory`, `DigitStripFactory`, `FormOverlay` | Regenera el layout que el usuario podría haber editado; mezcla plantilla y dataset |
+| `formvision process --image ... --layout ... --align --template-image ...` | Ejecutar el pipeline y exportar resultado | Imagen, layout y referencia de plantilla | JSON; opcional CSV y SQLite | Base; modelo MNIST si `--icr-engine mnist`; docTR si `--ocr-engine doctr` | Solo con ICR MNIST explícito | Uso normal / evaluación | `FormProcessingPipeline`, extractores y exporters | Camino principal; por defecto usa ICR/OCR deterministas basados en `demo_value` |
+| `python scripts/build_student_batch.py` | Regenerar plantilla base, 10 formularios limpios y ground truth | MNIST IDX, layout/template de demo | Sobrescribe `template/template.png` y `layout.json`; crea `images/clean/student_*.png`, `expected/student_*.json`, `expected/student_batch.json`; usa `data/digits` | Base + archivos MNIST; no carga un modelo `.npz` | No para producir imágenes; sí requiere datos MNIST | Generación sintética | `MnistDigitExporter`, `SyntheticOmrSheetFactory`, `DigitStripFactory`, `FormOverlay` | Regenera el layout que el usuario podría haber editado; mezcla plantilla y dataset |
 | `python scripts/build_scanned_variants.py` | Simular rotación, desplazamiento y ruido | `demo/omr_admission/images/clean/student_*.png` | `images/scanned/student_*.png` | Base, OpenCV | No | Generación sintética | `ScanSimulator` | Paso claro; no produce ground truth nuevo porque conserva el de clean |
-| `python scripts/process_demo_batch.py` | Procesar todos los escaneos del demo | `images/scanned/*.png`, layout JSON, modelo MNIST | `results/student_*_result.json` | Base + `.npz` MNIST + docTR y pesos cacheados | Sí, ICR MNIST; docTR pretrained | Uso normal / evaluación | `TemplateLoader`, `FormProcessingPipeline`, `MnistDigitIcrEngine`, `DoctrOcrEngine` | Duplicado de repetir `formvision process`; más rígido y menos configurable |
-| `python scripts/build_digit_overlay_example.py` | Generar una secuencia ilustrativa de overlays | MNIST IDX, blank/layout de demo | `data/outputs/digit_overlay_example/*` y metadata JSON; regenera blank/layout | Base + MNIST IDX | No | Generación sintética / ejemplo | `MnistDigitExporter`, `DigitStripFactory`, `FormOverlay`, `SyntheticOmrSheetFactory` | Experimental/ilustrativo; se solapa con `build_student_batch.py` |
+| `python scripts/process_demo_batch.py` | Procesar todos los escaneos del demo | `images/scanned/*.png`, layout JSON, modelo MNIST | `data/outputs/demo_batch/student_*_result.json` | Base + `.npz` MNIST + docTR y pesos cacheados | Sí, ICR MNIST; docTR pretrained | Uso normal / evaluación | `TemplateLoader`, `FormProcessingPipeline`, `MnistDigitIcrEngine`, `DoctrOcrEngine` | Duplicado de repetir `formvision process`; más rígido y menos configurable |
+| `python scripts/build_digit_overlay_example.py` | Generar una secuencia ilustrativa de overlays | MNIST IDX, template/layout de demo | `data/outputs/digit_overlay_example/*` y metadata JSON; regenera template/layout | Base + MNIST IDX | No | Generación sintética / ejemplo | `MnistDigitExporter`, `DigitStripFactory`, `FormOverlay`, `SyntheticOmrSheetFactory` | Experimental/ilustrativo; se solapa con `build_student_batch.py` |
 | `python training/train_mnist_digit.py` | Crear el modelo local de prototipos y muestras MNIST | IDX de entrenamiento | `formvision/models/mnist_digit_prototypes.npz` | Base + NumPy/OpenCV; MNIST descargado | Es el entrenamiento del ICR soportado | Entrenamiento | Consumido por `MnistDigitIcrEngine` y evaluador ICR | Modelo simple de prototipos/k-NN; no entrena OCR |
 | `python training/train_digit_sequence.py` | Anunciar la futura ruta de ICR secuencial | Ninguna | Solo mensaje en stdout | Python | No | Entrenamiento | Ninguna | Incompleto: stub/roadmap, no entrena |
 | `python training/evaluate_icr.py --image ... --layout ...` | Evaluar un ROI ICR individual | Imagen, layout, `--field-id`; `.npz` por defecto | Valor, confianza y metadata en stdout | Base + `.npz` MNIST | Sí, `.npz` existente | Evaluación | `TemplateLoader`, `CoordinateMapper`, `MnistDigitIcrEngine` | Evaluación aislada; no compara automáticamente con `expected/` |
 | `python training/evaluate_ocr.py --image ... --layout ...` | Evaluar un ROI OCR individual con docTR | Imagen, layout, `--field-id` | Valor, confianza y metadata en stdout | Base + `[ocr]` + pesos descargados/cacheados | No entrenado localmente; pretrained | Evaluación | `TemplateLoader`, `CoordinateMapper`, `DoctrOcrEngine` | Evaluación aislada; no produce reporte ni ground truth |
-| Abrir `tools/layout_viewer.html` | Editar ROIs y propiedades de fields en el navegador | Imagen blank y layout JSON cargados manualmente | JSON guardado con File System Access API o descargado | Navegador moderno; no Python | No | Creación de plantillas | Ningún script; consume el esquema de `layout.json` | Herramienta standalone; no valida el layout contra el pipeline |
+| Abrir `tools/layout_viewer.html` | Editar ROIs y propiedades de fields en el navegador | Imagen template y layout JSON cargados manualmente | JSON guardado con File System Access API o descargado | Navegador moderno; no Python | No | Creación de plantillas | Ningún script; consume el esquema de `layout.json` | Herramienta standalone; no valida el layout contra el pipeline |
 | `pytest` | Ejecutar pruebas unitarias | Código fuente y dependencias base/dev | Resultado de pruebas; cachés de pytest/bytecode pueden aparecer | `[dev]` | No | Evaluación técnica | Tests de OMR, pipeline, normalización, simulador, segmentación y validadores | No es evaluación de exactitud contra los archivos de demo |
 
 ### Componentes internos que sostienen los comandos
@@ -54,7 +54,7 @@ solicita `--align`. Los exporters JSON/CSV/SQLite son salidas del comando
 2. Opcionalmente instalar `[mnist]` y `[ocr]` si se quiere usar la variante
    tecnológica completa descrita en el README.
 3. Abrir manualmente `tools/layout_viewer.html` y cargar
-   `demo/omr_admission/template/blank.png` y `layout.json`.
+   `demo/omr_admission/template/template.png` y `layout.json`.
 4. Según `docs/flow.md`, ajustar y guardar ROIs.
 5. Ejecutar `python scripts/build_student_batch.py`.
 6. Ejecutar `python scripts/build_scanned_variants.py`.
@@ -72,9 +72,11 @@ python scripts/build_scanned_variants.py
 formvision process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
+  --align \
+  --template-image demo/omr_admission/template/template.png \
   --icr-engine mnist \
   --ocr-engine doctr \
-  --json-output demo/omr_admission/results/student_001_result.json
+  --json-output data/outputs/student_001_result.json
 ```
 
 Entradas: template/layout, MNIST raw para regenerar assets, imagen escaneada y
@@ -83,7 +85,7 @@ QR, fields, confidence, validación y metadata. CSV/SQLite son opcionales.
 
 ### Desorden y conexiones débiles
 
-- La demostración preparada ya contiene `blank.png`, `layout.json`, 10 imágenes
+- La demostración preparada ya contiene `template.png`, `layout.json`, 10 imágenes
   clean, 10 escaneos y expected/results; regenerar no es necesario para entender
   el proyecto.
 - `build_student_batch.py` vuelve a crear la plantilla y el layout, incluso si
@@ -96,7 +98,7 @@ QR, fields, confidence, validación y metadata. CSV/SQLite son opcionales.
 - El pipeline no guarda imágenes de alineación, dropout, ROIs ni recortes. La
   única imagen visual que produce la CLI es `inspect-layout`, que dibuja ROIs;
   no existe una visualización de etapas.
-- No hay comparación automática entre `results/` y `expected/`; el usuario debe
+- No hay comparación automática entre `data/outputs/` y `expected/`; el usuario debe
   inspeccionar JSON manualmente.
 
 ### Recorrido simplificado propuesto
@@ -123,7 +125,7 @@ La ruta visual existente es:
 También existe `formvision generate-omr-sheet`, que genera simultáneamente una
 imagen y un layout sintético. `build_student_batch.py` y
 `build_digit_overlay_example.py` invocan el mismo factory y escriben
-`demo/omr_admission/template/blank.png` y `layout.json`, por lo que son
+`demo/omr_admission/template/template.png` y `layout.json`, por lo que son
 generadores de plantilla además de generadores de datos.
 
 ### Entradas y salidas
@@ -134,7 +136,7 @@ cargarlo. Salida: layout JSON con ROIs y tipos `qr`, `ocr`, `icr`, `omr`.
 
 ```bash
 formvision inspect-layout \
-  --image path/to/blank.png \
+  --image path/to/template.png \
   --layout path/to/layout.json \
   --output data/outputs/layout_preview.png
 ```
@@ -166,7 +168,7 @@ La ruta de batch es:
 
 1. MNIST raw disponible.
 2. `build_student_batch.py` exporta 12 PNG por dígito a `data/digits`.
-3. El mismo script recrea `blank.png` y `layout.json` con ocho preguntas y
+3. El mismo script recrea `template.png` y `layout.json` con ocho preguntas y
    campos vacíos.
 4. Genera 10 clean forms aplicando tira de dígitos, textos y respuestas OMR.
 5. Escribe un JSON esperado por estudiante y `student_batch.json`.
@@ -200,7 +202,7 @@ metadata de los overlays.
 
 ### Recorrido simplificado propuesto
 
-MNIST opcional → `generate-omr-sheet` para obtener blank + layout → un único
+MNIST opcional → `generate-omr-sheet` para obtener template + layout → un único
 generador parametrizable para clean + expected → `build_scanned_variants.py` →
 dataset con clean/scanned/expected alineados por nombre.
 
@@ -263,14 +265,15 @@ formvision process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --align \
+  --template-image demo/omr_admission/template/template.png \
   --json-output data/outputs/student_001_result.json
 
 # Opcionalmente, para el motor MNIST/docTR:
 python training/evaluate_icr.py \
-  --image demo/omr_admission/images/scanned/student_001.png \
+  --image demo/omr_admission/images/clean/student_001.png \
   --layout demo/omr_admission/template/layout.json
 python training/evaluate_ocr.py \
-  --image demo/omr_admission/images/scanned/student_001.png \
+  --image demo/omr_admission/images/clean/student_001.png \
   --layout demo/omr_admission/template/layout.json
 ```
 
@@ -311,7 +314,8 @@ modelos opcionales en prerequisito, es:
 pip install -e ".[dev]"
   → formvision process --image demo/omr_admission/images/scanned/student_001.png \
        --layout demo/omr_admission/template/layout.json \
-       --align --json-output data/outputs/student_001_result.json
+       --align --template-image demo/omr_admission/template/template.png \
+       --json-output data/outputs/student_001_result.json
   → abrir data/outputs/student_001_result.json
   → formvision inspect-layout --image demo/omr_admission/images/scanned/student_001.png \
        --layout demo/omr_admission/template/layout.json \

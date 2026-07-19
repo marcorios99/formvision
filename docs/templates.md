@@ -3,7 +3,7 @@
 Una plantilla define la geometría de una página y el layout define cómo
 interpretarla. La nomenclatura objetivo para la imagen base es `template.png`,
 pero durante la transición el archivo físico existente sigue siendo
-`demo/omr_admission/template/blank.png`.
+`demo/omr_admission/template/template.png`.
 
 ## Imagen de referencia
 
@@ -15,7 +15,7 @@ La ruta equivalente de menor cambio sería:
 
 ```text
 demo/omr_admission/template/
-  template.png   # nombre objetivo; hoy blank.png
+  template.png   # imagen de referencia actual
   layout.json
 ```
 
@@ -104,8 +104,5 @@ hitos posteriores.
 
 ## Transición de nomenclatura
 
-No se ha renombrado `blank.png` ni se han cambiado sus referencias en código. La
-migración futura debe actualizar al menos `README.md`, `docs/flow.md`,
-`demo/omr_admission/README.md`, `scripts/build_student_batch.py` y
-`scripts/build_digit_overlay_example.py`, además de cualquier ruta aprobada si
-el demo se mueve a `examples/`.
+Las referencias de código y documentación usan ahora `template.png`. El demo
+continúa bajo `demo/omr_admission`; no se ha movido a `examples/`.

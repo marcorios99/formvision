@@ -63,6 +63,7 @@ python -m formvision.cli process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --align \
+  --template-image demo/omr_admission/template/template.png \
   --json-output data/outputs/student_001_result.json
 ```
 
@@ -77,6 +78,7 @@ python -m formvision.cli process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --align \
+  --template-image demo/omr_admission/template/template.png \
   --icr-engine mnist \
   --ocr-engine doctr \
   --json-output data/outputs/student_001_real_engines.json
@@ -115,8 +117,7 @@ imagen y un JSON; se editan id, label, type y ROI; y se guarda o descarga el JSO
 punto de partida.
 
 Durante esta etapa el archivo físico de la imagen base sigue siendo
-`demo/omr_admission/template/blank.png`. `template.png` es la nomenclatura
-objetivo futura, no un archivo presente todavía.
+`demo/omr_admission/template/template.png`.
 
 Tras guardar el layout, `inspect-layout` permite verificar visualmente las ROIs y
 `process` permite probar una imagen. No hay validación geométrica completa ni
@@ -147,7 +148,7 @@ La correspondencia clean/scanned/expected se mantiene por nombre de estudiante;
 no existe un verificador automático. `build_digit_overlay_example.py` es una
 variante ilustrativa y se solapa con el batch.
 
-El batch recrea `blank.png` y `layout.json`, por lo que no debe ejecutarse sobre
+El batch recrea `template.png` y `layout.json`, por lo que no debe ejecutarse sobre
 un layout editado sin conservar una copia previa.
 
 ## 5. Entrenar o evaluar modelos
@@ -157,10 +158,10 @@ Este recorrido es avanzado y opcional.
 ```bash
 python training/train_mnist_digit.py
 python training/evaluate_icr.py \
-  --image demo/omr_admission/images/scanned/student_001.png \
+  --image demo/omr_admission/images/clean/student_001.png \
   --layout demo/omr_admission/template/layout.json
 python training/evaluate_ocr.py \
-  --image demo/omr_admission/images/scanned/student_001.png \
+  --image demo/omr_admission/images/clean/student_001.png \
   --layout demo/omr_admission/template/layout.json
 ```
 

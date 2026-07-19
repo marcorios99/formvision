@@ -6,7 +6,7 @@ This folder contains the public, portfolio-friendly demo flow.
 
 ```text
 template/
-  blank.png      Blank answer sheet used by the layout editor.
+  template.png   Blank answer sheet used by the layout editor.
   layout.json    ROI definitions for QR/OCR/ICR/OMR fields.
 images/
   clean/         Generated forms with synthetic student data.
@@ -20,7 +20,7 @@ results/
 ## Flow
 
 1. Open `tools/layout_viewer.html`.
-2. Load `template/blank.png`.
+2. Load `template/template.png`.
 3. Load `template/layout.json`.
 4. Adjust ROIs and save the layout JSON.
 5. Process one scanned form:
@@ -29,9 +29,11 @@ results/
 formvision process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
+  --align \
+  --template-image demo/omr_admission/template/template.png \
   --icr-engine mnist \
   --ocr-engine doctr \
-  --json-output demo/omr_admission/results/student_001_result.json
+  --json-output data/outputs/student_001_result.json
 ```
 
 Regenerate the clean and scanned demo images:

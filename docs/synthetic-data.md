@@ -86,7 +86,7 @@ de la selección disponible en `data/digits`.
 
 - El generador batch fija ocho preguntas y coordenadas de overlays; no es un
   generador general de cualquier formulario.
-- Regenera `blank.png` y `layout.json`, por lo que puede sobrescribir una edición
+- Regenera `template.png` y `layout.json`, por lo que puede sobrescribir una edición
   manual del layout.
 - La simulación de escaneo conserva la correspondencia por nombre, pero no
   verifica que expected y resultado sean consistentes.

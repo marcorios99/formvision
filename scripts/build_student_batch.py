@@ -46,7 +46,7 @@ def main() -> None:
 
     MnistDigitExporter().export_digits(output_dir=digits_dir, samples_per_digit=12)
 
-    base_form_path = template_dir / "blank.png"
+    base_form_path = template_dir / "template.png"
     layout_path = template_dir / "layout.json"
     SyntheticOmrSheetFactory().create_sheet(
         image_path=base_form_path,

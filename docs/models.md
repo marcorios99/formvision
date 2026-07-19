@@ -28,7 +28,7 @@ por un solo ROI:
 
 ```bash
 python training/evaluate_icr.py \
-  --image demo/omr_admission/images/scanned/student_001.png \
+  --image demo/omr_admission/images/clean/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --field-id student_code
 ```
@@ -56,7 +56,7 @@ procesa un ROI e imprime valor, confianza y metadata:
 ```bash
 python -m pip install -e ".[ocr]"
 python training/evaluate_ocr.py \
-  --image demo/omr_admission/images/scanned/student_001.png \
+  --image demo/omr_admission/images/clean/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --field-id full_name
 ```

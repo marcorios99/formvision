@@ -44,7 +44,7 @@ template.png
 ```
 
 En el estado actual, el archivo físico de la plantilla todavía se llama
-`blank.png`; `template.png` es la nomenclatura objetivo para un cambio posterior.
+`template.png` es la imagen de referencia usada por el demo.
 
 ## Instalación mínima
 
@@ -74,6 +74,7 @@ python -m formvision.cli process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --align \
+  --template-image demo/omr_admission/template/template.png \
   --json-output data/outputs/student_001_result.json
 ```
 

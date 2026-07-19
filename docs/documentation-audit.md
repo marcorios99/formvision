@@ -8,12 +8,12 @@ Markdown existentes.
 
 | Ruta | Propósito actual | Contenido único que aporta | ¿Está actualizado? | ¿Contradice otro documento? | ¿Duplica información? | Recomendación | Documento de destino si se fusiona | Riesgo de eliminarlo |
 |---|---|---|---|---|---|---|---|---|
-| `README.md` | Entrada principal: descripción, instalación, quickstart, estructura, comandos, ejemplo de salida, limitaciones y roadmap | Único punto de entrada completo para alguien que clona el repositorio; reúne dependencias base y extras `mnist`/`ocr` | Parcialmente. Mezcla demo preparada, regeneración de assets y CLI avanzada; todavía usa `blank.png` | Sí, su flujo no coincide exactamente con `docs/flow.md` ni con `demo/omr_admission/README.md` | Alta con `architecture`, `flow`, `design-decisions`, `limitations` y `current-workflows` | conservar y actualizar | — | Muy alto |
-| `demo/omr_admission/README.md` | Describe la estructura y el flujo local de la demo | Contexto específico de `template/`, `images/`, `expected/` y `results/` | Parcialmente. Usa `blank.png` y presenta la ruta MNIST/docTR como flujo principal | Sí: repite el flujo de `README.md` y `docs/flow.md` | Alta | fusionar | `docs/workflows.md` | Medio-alto |
+| `README.md` | Entrada principal: descripción, instalación, quickstart, estructura, comandos, ejemplo de salida, limitaciones y roadmap | Único punto de entrada completo para alguien que clona el repositorio; reúne dependencias base y extras `mnist`/`ocr` | Parcialmente. Mezcla demo preparada, regeneración de assets y CLI avanzada; ya usa `template.png` | Sí, su flujo no coincide exactamente con `docs/flow.md` ni con `demo/omr_admission/README.md` | Alta con `architecture`, `flow`, `design-decisions`, `limitations` y `current-workflows` | conservar y actualizar | — | Muy alto |
+| `demo/omr_admission/README.md` | Describe la estructura y el flujo local de la demo | Contexto específico de `template/`, `images/`, `expected/` y `results/` | Parcialmente. Usa `template.png` y presenta la ruta MNIST/docTR como flujo principal | Sí: repite el flujo de `README.md` y `docs/flow.md` | Alta | fusionar | `docs/workflows.md` | Medio-alto |
 | `docs/architecture.md` | Explica capas del paquete, demo, scripts, training, tools y pipeline | Mapa técnico compacto y tipos de extractores QR/OMR/ICR/OCR | Parcialmente. La arquitectura es válida, pero debe alinearse con la estructura documental y de ejemplos aprobada | No directamente | Media con `README.md` y `docs/design-decisions.md` | conservar y actualizar | — | Alto |
 | `docs/current-workflows.md` | Inventario amplio de comandos y recorridos A–E, dependencias y golden path | Análisis actual de duplicados, dependencias reales, puntos desconectados y ausencia de comparación/visualización de etapas | Válido como fotografía del estado actual; usa la nomenclatura antigua y es demasiado extenso para ser la documentación final | Sí, identifica contradicciones con `README.md`, `flow.md` y el README de demo | Alta | fusionar | `docs/workflows.md` y partes en `templates.md`/`models.md` | Medio |
 | `docs/design-decisions.md` | Registra decisiones sobre demo sintética, carpeta `demo/`, ICR restringido y OCR opcional | Justificación histórica y técnica de synthetic-only, ICR por dígitos separados y docTR opcional | Conceptualmente sí; la decisión sobre la carpeta de demo puede cambiar | Puede quedar en tensión con `examples/` frente a `demo/`, pero no contradice el pipeline | Media con `architecture`, `README.md` y `limitations` | fusionar | `docs/architecture.md` y `docs/synthetic-data.md` | Medio |
-| `docs/flow.md` | Flujo lineal corto del viewer a la generación y procesamiento | La secuencia operativa más breve de la demo existente | Desactualizado para el Hito 0: usa `blank.png`, no incluye comparación con `expected` y mezcla edición con regeneración | Sí: puede sugerir editar y luego regenerar, aunque el batch sobrescribe el layout | Alta con los documentos de workflow | fusionar | `docs/workflows.md` | Medio-alto |
+| `docs/flow.md` | Flujo lineal corto del viewer a la generación y procesamiento | La secuencia operativa más breve de la demo existente | Parcialmente actualizado: incluye `template.png`, pero no incluye comparación con `expected` y mezcla edición con regeneración | Sí: puede sugerir editar y luego regenerar, aunque el batch sobrescribe el layout | Alta con los documentos de workflow | fusionar | `docs/workflows.md` | Medio-alto |
 | `docs/limitations.md` | Limitaciones de ICR, OCR, perspectiva, datos sintéticos y futuras mejoras | Lista concentrada de límites técnicos y de alcance productivo | Parcialmente. Sigue siendo válida, pero debe dividirse entre modelos, datos y arquitectura | No directamente | Media con `README.md`, `design-decisions.md` y `current-workflows.md` | fusionar | `docs/models.md` y `docs/architecture.md` | Medio |
 
 No hay Markdown separado para plantillas, datos sintéticos o modelos. Esa
@@ -42,7 +42,7 @@ documento duplicado dentro de `docs/`.
 |---|---|
 | `README.md` | Qué es FormVision, instalación mínima, golden path breve, estructura resumida, enlaces a `docs/` y límites básicos. Los detalles extensos de comandos deben salir de aquí. |
 | `docs/workflows.md` | Preparación de la demo, flujo principal `template.png → layout.json → scanned → procesamiento → expected → visualización`, generación avanzada, entrenamiento/evaluación y CLI avanzada. Fusiona `docs/flow.md`, el flujo de `demo/omr_admission/README.md` y el análisis de `current-workflows.md`. |
-| `docs/templates.md` | Formulario base, viewer HTML, layout JSON, campos, ROIs, validadores, relación entre imagen y layout y migración `blank.png` → `template.png`. Toma contenido de README, demo README, `flow.md` y `current-workflows.md`. |
+| `docs/templates.md` | Formulario base, viewer HTML, layout JSON, campos, ROIs y validadores. Toma contenido de README, demo README, `flow.md` y `current-workflows.md`. |
 | `docs/synthetic-data.md` | Generación de plantilla/formularios, `build_student_batch.py`, escaneos simulados, clean/scanned/expected, MNIST como fuente y correspondencia por nombre. Toma contenido de README, `design-decisions.md` y `current-workflows.md`. |
 | `docs/models.md` | Modelo pequeño ICR con MNIST, entrenamiento, evaluación por ROI, límites de segmentación y configuración de OCR docTR pretrained. Toma contenido de README, `design-decisions.md`, `limitations.md` y `current-workflows.md`. |
 | `docs/architecture.md` | Capas, pipeline, extractores, validación, exporters, artefactos y decisiones estructurales. Conserva su contenido actual y absorbe las decisiones técnicas y limitaciones no específicas de modelos. |
@@ -51,20 +51,20 @@ No se recomienda mantener seis fuentes completas de flujo. Si se conserva
 `demo/omr_admission/README.md`, debería quedar como ficha local corta que enlace
 a `docs/workflows.md`.
 
-## 3. Referencias a `blank.png`
+## 3. Referencias migradas a `template.png`
 
-La nomenclatura objetivo es `template.png`. No se ha realizado el renombrado.
+La nomenclatura actual es `template.png`; el renombrado ya fue aplicado.
 
 ### Inventario de referencias
 
 | Archivo actual | Referencia/uso | Categoría | Cambios necesarios | Riesgos |
 |---|---|---|---|---|
-| `README.md` | Guía: `demo/omr_admission/template/blank.png` | Documentación | Cambiar a la ruta aprobada de `template.png` | La guía quedaría apuntando a un archivo inexistente si se renombra sin actualizarla |
-| `demo/omr_admission/README.md` | Estructura `template/blank.png` y paso “Load `template/blank.png`” | Documentación | Actualizar estructura y pasos | Medio |
-| `docs/flow.md` | Paso 2 carga `demo/omr_admission/template/blank.png` | Documentación | Actualizar ruta y revisar el orden edición/regeneración | Medio |
+| `README.md` | Guía: `demo/omr_admission/template/template.png` | Documentación | Referencia actualizada | Bajo |
+| `demo/omr_admission/README.md` | Estructura `template/template.png` y paso de carga | Documentación | Referencia actualizada | Bajo |
+| `docs/flow.md` | Paso 2 carga `demo/omr_admission/template/template.png` | Documentación | Referencia actualizada | Bajo |
 | `docs/current-workflows.md` | Inventario, recorrido B/C, ejemplos de `inspect-layout` y análisis de rutas | Documentación | Actualizar al fusionarlo en `workflows.md`/`templates.md`; conservar la referencia solo como estado histórico si corresponde | Medio |
-| `scripts/build_student_batch.py:49` | `base_form_path = template_dir / "blank.png"` | Código/script | Cambiar el nombre consumido por el batch | Alto: el batch no encontrará la plantilla si solo se renombra el PNG |
-| `scripts/build_digit_overlay_example.py:36` | `base_form_path = template_dir / "blank.png"` | Código/script | Cambiar el nombre consumido por el ejemplo | Medio-alto |
+| `scripts/build_student_batch.py:49` | `base_form_path = template_dir / "template.png"` | Código/script | Referencia actualizada | Bajo |
+| `scripts/build_digit_overlay_example.py:36` | `base_form_path = template_dir / "template.png"` | Código/script | Referencia actualizada | Bajo |
 | `formvision/` | No hay referencias literales encontradas | Código | No hay cambio directo; la CLI recibe rutas o usa defaults distintos | Bajo |
 | `tests/` | No hay referencias encontradas | Pruebas | No hay cambio directo; convendría añadir cobertura de resolución del asset al migrar | Bajo ahora; medio después |
 | `tools/` | No hay referencias encontradas; el viewer carga archivos elegidos por el usuario | Herramienta | Solo actualizar documentación asociada | Bajo |
@@ -74,7 +74,7 @@ La nomenclatura objetivo es `template.png`. No se ha realizado el renombrado.
 Los dos scripts de overlays consumen actualmente:
 
 ```text
-demo/omr_admission/template/blank.png
+demo/omr_admission/template/template.png
 demo/omr_admission/template/layout.json
 ```
 
@@ -83,7 +83,7 @@ imagen base mediante `SyntheticOmrSheetFactory`; además producen PNGs clean,
 scanned o de ejemplo y archivos expected/metadata. La CLI
 `generate-omr-sheet` no usa ese nombre por defecto: genera
 `data/outputs/omr_sheet_001.png`. `inspect-layout` y el viewer aceptan cualquier
-ruta y no dependen literalmente de `blank.png`.
+ruta y no dependen de un nombre fijo.
 
 ### Ruta objetivo
 
@@ -154,12 +154,12 @@ Este plan no se ejecutó:
    `demo/omr_admission/template/template.png`; usar `examples/` requeriría además
    aprobar la reorganización del demo.
 2. Confirmar cambios locales y conservar una copia recuperable de
-   `blank.png`. No eliminar archivos automáticamente.
-3. Renombrar o copiar manualmente `blank.png` a `template.png` solo tras aprobar
-   el cambio de nombre.
+   `template.png`. No eliminar archivos automáticamente.
+3. El cambio de nombre ya aplicado debe conservarse como rename reconocible por
+   Git.
 4. Actualizar las dos rutas en `scripts/` y todas las referencias documentales
    del inventario.
-5. Buscar nuevamente `blank.png` en todo el repositorio, no solo en Markdown,
+5. Buscar nuevamente `template.png` en todo el repositorio, no solo en Markdown,
    para confirmar que no quedan consumidores activos.
 6. No ejecutar los batches sobre un layout editado sin copia: ambos regeneran la
    plantilla y `layout.json`.
