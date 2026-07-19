@@ -1,274 +1,115 @@
-# Synthetic Form Reader
+# FormVision
 
-Synthetic Form Reader is a portfolio-friendly Python demo for processing scanned
-forms with OpenCV. It reads a QR code, crops configured regions of interest,
-extracts OCR/ICR/OMR-style fields, validates the extracted values and exports a
-structured result.
+FormVision es un proyecto demostrativo de procesamiento de formularios con
+OpenCV. Muestra cómo un formulario puede pasar por un pipeline configurable que
+localiza un QR, recorta campos, aplica extractores OCR/ICR/OMR, valida valores y
+exporta un resultado estructurado.
 
-The project uses generated forms and public demo layouts only. It does not
-include private datasets, production database schemas, proprietary models or
-business-specific rules.
+Todo el material del repositorio es sintético o público: formularios generados,
+identidades ficticias, respuestas ficticias, datos `expected/` y un modelo ICR
+pequeño derivado de MNIST. No representa datos reales, reglas de negocio,
+precisión productiva ni modelos privados.
 
-## Features
+## Qué demuestra
 
-- Synthetic form generation for repeatable demos.
-- QR code reading with OpenCV.
-- JSON-based layout definitions with explicit ROIs.
-- OMR detection for multiple-choice bubbles.
-- Optional docTR OCR adapter for printed text fields.
-- MNIST-based ICR demo for constrained handwritten numeric fields.
-- Synthetic handwritten numeric field for ICR-style demos.
-- Field validation rules such as `required`, `digits:8` and `single_choice`.
-- JSON, CSV and local SQLite exporters.
-- Unit tests for validators, OMR and the pipeline.
+- **QR**: lectura mediante el detector QR de OpenCV.
+- **OMR**: selección de burbujas mediante puntuación de píxeles.
+- **OCR**: lectura de texto impreso; el adaptador real opcional usa docTR.
+- **ICR**: lectura acotada de dígitos manuscritos separados; el motor real usa
+  segmentación y un modelo pequeño basado en MNIST.
 
-## Project Structure
+El pipeline también incluye validación y exportación JSON, CSV o SQLite. Los
+motores `DemoOcrExtractor` y `DemoIcrExtractor` son simuladores: devuelven el
+`demo_value` configurado en `layout.json` y sirven para probar la orquestación,
+no para demostrar reconocimiento real.
 
-```text
-formvision/
-  config/            Pipeline settings and layout schema
-  image_processing/  Loading, preprocessing and correction primitives
-  layout/            Templates, coordinates and synthetic sample generation
-  extractors/        QR, OCR, ICR and OMR extractors
-  validators/        Field validation rules
-  exporters/         JSON, CSV and SQLite outputs
-  pipeline/          End-to-end orchestration
-  cli.py             Command-line interface
+## Estado actual
 
-data/
-  digits/            MNIST digit PNG samples used to compose ICR fields
-  external/          External datasets such as MNIST, ignored by Git
-  outputs/           Optional processing outputs, generated on demand
+Funcionan la generación sintética, la simulación de escaneos, el procesamiento
+individual por CLI, la alineación del page frame, QR/OMR, el ICR MNIST opcional y
+el adaptador OCR docTR opcional. La comparación automática con `expected/`, la
+evaluación del lote, la visualización de etapas y `demo.py` aún no están
+implementados.
 
-demo/
-  omr_admission/     Public end-to-end portfolio demo
-
-scripts/             Demo asset generation scripts
-tools/               Standalone layout/result inspection tools
-training/            Local OCR/ICR training and evaluation scripts
-tests/               Focused automated tests
-```
-
-## Quickstart
-
-Install dependencies:
-
-```bash
-pip install -e ".[dev]"
-```
-
-Optional MNIST support for realistic handwritten digits:
-
-```bash
-pip install -e ".[mnist]"
-python -c "from torchvision.datasets import MNIST; MNIST(root='data/external/mnist', train=True, download=True)"
-```
-
-Train the first supported ICR engine from local MNIST files:
-
-```bash
-python training/train_mnist_digit.py
-```
-
-Then process a form with the MNIST-based numeric ICR engine:
-
-```bash
-python -m formvision.cli process \
-  --image demo/omr_admission/images/clean/student_001.png \
-  --layout demo/omr_admission/template/layout.json \
-  --icr-engine mnist
-```
-
-Optional docTR OCR support:
-
-```bash
-pip install -e ".[ocr]"
-```
-
-The default docTR OCR configuration favors speed for straight form fields:
-
-- detector: `fast_tiny`
-- recognizer: `crnn_mobilenet_v3_small`
-- `assume_straight_pages=True`
-
-The pretrained weights are downloaded by docTR on the first run and cached by
-the local project cache under `formvision/models/doctr_cache`.
-
-Generate a synthetic form:
-
-```bash
-formvision generate-sample
-```
-
-Generate a larger OMR sheet and its matching layout JSON:
-
-```bash
-formvision generate-omr-sheet --questions 20 --options A,B,C,D
-```
-
-Generate the OMR sheet with MNIST handwritten digits in the ICR field:
-
-```bash
-formvision generate-omr-sheet --questions 20 --handwriting-source mnist
-```
-
-Generate a random eight-digit ICR value and render each digit from MNIST:
-
-```bash
-formvision generate-omr-sheet --handwriting-source mnist --student-code random
-```
-
-Build the staged example assets:
-
-```bash
-python scripts/build_student_batch.py
-```
-
-Create mildly rotated/noisy scan variants:
-
-```bash
-python scripts/build_scanned_variants.py
-```
-
-Edit a layout visually:
+El flujo conceptual que se quiere consolidar es:
 
 ```text
-open tools/layout_viewer.html
+template.png
+→ definición de campos en layout.json
+→ lote de formularios scanned
+→ alineamiento contra la plantilla
+→ extracción QR / OCR / ICR / OMR
+→ comparación con expected
+→ visualización
 ```
 
-Then load `demo/omr_admission/template/blank.png`, open
-`demo/omr_admission/template/layout.json`, adjust the ROIs and use `Save JSON`.
-Chrome/Edge can overwrite the selected JSON file after asking for permission.
-Other browsers can use `Download JSON`.
+En el estado actual, el archivo físico de la plantilla todavía se llama
+`blank.png`; `template.png` es la nomenclatura objetivo para un cambio posterior.
 
-The staged example differentiates the technologies:
+## Instalación mínima
 
-- `Student Code`: ICR-style handwritten numeric field.
-- `Full Name`: OCR-style printed text field.
-- `Exam Date`: OCR-style printed date field.
-- `Exam Code`: QR code payload.
-- `Question 01-08`: OMR marked bubbles.
-
-Generated assets follow this convention:
-
-- `demo/omr_admission/template`: blank form and layout JSON.
-- `demo/omr_admission/images/clean`: clean generated student forms.
-- `demo/omr_admission/images/scanned`: mildly rotated/noisy scan-like inputs.
-- `demo/omr_admission/expected`: synthetic student ground truth.
-- `demo/omr_admission/results`: generated processing outputs for the demo.
-- `data/digits`: generated MNIST digit snippets.
-- `data/outputs`: scratch outputs and experimental generated files.
-
-The current MNIST ICR engine is intentionally scoped to constrained handwritten
-numeric fields. It segments separated foreground components, normalizes each
-candidate to 28x28 and classifies each digit against an MNIST-derived model. A
-future sequence engine could read the full field end-to-end with a CNN/CTC-style
-model when touching digits or variable-length handwriting become requirements.
-
-Inspect the configured regions:
+Se requiere Python >= 3.10:
 
 ```bash
-python -m formvision.cli inspect-layout \
-  --image demo/omr_admission/images/clean/student_001.png \
-  --output data/outputs/layout_preview.png
+python -m pip install -e ".[dev]"
 ```
 
-Process the form and export JSON:
+MNIST y docTR son extras, no requisitos del flujo principal:
+
+```bash
+python -m pip install -e ".[mnist]"
+python -m pip install -e ".[ocr]"
+```
+
+MNIST requiere sus archivos IDX bajo `data/external/mnist`; docTR descarga o
+utiliza pesos pretrained en su cache durante el primer uso.
+
+## Ejemplo mínimo actual
+
+El repositorio ya contiene muestras preparadas. Este comando procesa una imagen
+scanned con los extractores demo deterministas y escribe un JSON:
 
 ```bash
 python -m formvision.cli process \
   --image demo/omr_admission/images/scanned/student_001.png \
   --layout demo/omr_admission/template/layout.json \
   --align \
-  --json-output demo/omr_admission/results/student_001_result.json
+  --json-output data/outputs/student_001_result.json
 ```
 
-Process with optional MNIST ICR and docTR OCR:
+Para usar los motores opcionales, se añaden `--icr-engine mnist` y/o
+`--ocr-engine doctr`. El resultado contiene QR, fields, confianza, validaciones
+y metadata, pero no se compara automáticamente con
+`demo/omr_admission/expected/student_001.json`.
 
-```bash
-python -m formvision.cli process \
-  --image demo/omr_admission/images/clean/student_001.png \
-  --layout demo/omr_admission/template/layout.json \
-  --icr-engine mnist \
-  --ocr-engine doctr \
-  --json-output demo/omr_admission/results/student_001_result.json
-```
+## Documentación
 
-Process every scanned demo image:
+- [Recorridos](docs/workflows.md)
+- [Plantillas y layouts](docs/templates.md)
+- [Datos sintéticos](docs/synthetic-data.md)
+- [Modelos y motores](docs/models.md)
+- [Arquitectura](docs/architecture.md)
+- [Auditoría documental](docs/documentation-audit.md)
 
-```bash
-python scripts/process_demo_batch.py
-```
+Los documentos históricos `docs/flow.md`, `docs/design-decisions.md`,
+`docs/limitations.md`, `docs/current-workflows.md` y
+`demo/omr_admission/README.md` se conservan por ahora; su contenido se está
+consolidando en los documentos anteriores.
 
-Optional CSV and SQLite outputs:
+## Limitaciones importantes
 
-```bash
-python -m formvision.cli process \
-  --image demo/omr_admission/images/scanned/student_001.png \
-  --layout demo/omr_admission/template/layout.json \
-  --csv-output demo/omr_admission/results/student_001.csv \
-  --sqlite-output demo/omr_admission/results/results.sqlite
-```
+- El ICR MNIST requiere dígitos separados dentro de un ROI numérico acotado; no
+  resuelve cursiva, dígitos tocándose ni escritura arbitraria.
+- No existe entrenamiento OCR local. docTR es pretrained, opcional y puede
+  descargar pesos.
+- La corrección de perspectiva actual está orientada a las marcas de los
+  formularios sintéticos.
+- Los resultados sintéticos no son un benchmark de exactitud productiva.
+- La comparación de resultados y la visualización completa de etapas son trabajo
+  pendiente.
 
-## Example Output
-
-```json
-{
-  "document_id": "FORM-2026-0001",
-  "template_id": "demo_admission_v1",
-  "status": "processed",
-  "barcode": {
-    "value": "FORM-2026-0001|demo_admission_v1",
-    "type": "QR_CODE",
-    "confidence": 1.0,
-    "source": "opencv_qr"
-  },
-  "fields": {
-    "student_code": {
-      "value": "12345678",
-      "confidence": 0.82,
-      "source": "demo_icr",
-      "valid": true,
-      "issues": []
-    },
-    "question_01": {
-      "value": "C",
-      "confidence": 0.44,
-      "source": "omr",
-      "valid": true,
-      "issues": []
-    }
-  }
-}
-```
-
-## Why Synthetic?
-
-The goal is to demonstrate engineering judgment and document-processing
-architecture without exposing real forms, model artifacts, coordinate systems,
-database structures or production validation logic.
-
-The OMR sheet generator creates an original demo form with magenta answer
-bubbles, a synthetic handwritten numeric field and matching JSON coordinates.
-It is inspired by common answer-sheet patterns, but it does not reuse
-third-party forms or private production templates.
-
-## Documentation
-
-- [Architecture](docs/architecture.md)
-- [Processing Flow](docs/flow.md)
-- [Design Decisions](docs/design-decisions.md)
-- [Limitations](docs/limitations.md)
-
-## Tests
+Para ejecutar las pruebas unitarias:
 
 ```bash
 pytest
 ```
-
-## Future Improvements
-
-- Add a real OCR adapter such as Tesseract, EasyOCR or another local engine.
-- Add optional 1D barcode support through `pyzbar`.
-- Add marker-based perspective correction.
-- Add a small web viewer for layout inspection and result review.
