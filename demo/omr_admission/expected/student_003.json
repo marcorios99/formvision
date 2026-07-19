@@ -1,0 +1,17 @@
+{
+  "image": "demo\\omr_admission\\images\\clean\\student_003.png",
+  "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+  "student_code": "03023757",
+  "full_name": "MARTA WILLIAMS",
+  "exam_date": "2026-06-12",
+  "answers": {
+    "question_01": "A",
+    "question_02": "B",
+    "question_03": "C",
+    "question_04": "D",
+    "question_05": "A",
+    "question_06": "B",
+    "question_07": "C",
+    "question_08": "D"
+  }
+}

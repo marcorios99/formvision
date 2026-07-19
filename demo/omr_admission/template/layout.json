@@ -1,0 +1,236 @@
+{
+  "template_id": "synthetic_omr_v1",
+  "page_size": {
+    "width": 1240,
+    "height": 1754
+  },
+  "fields": [
+    {
+      "id": "student_code",
+      "label": "Student Code",
+      "type": "icr",
+      "roi": {
+        "x": 95,
+        "y": 270,
+        "width": 335,
+        "height": 72
+      },
+      "validators": [
+        "required",
+        "digits:8"
+      ],
+      "demo_value": ""
+    },
+    {
+      "id": "full_name",
+      "label": "Full Name",
+      "type": "ocr",
+      "roi": {
+        "x": 470,
+        "y": 270,
+        "width": 560,
+        "height": 72
+      },
+      "validators": [
+        "required"
+      ],
+      "demo_value": ""
+    },
+    {
+      "id": "exam_date",
+      "label": "Date",
+      "type": "ocr",
+      "roi": {
+        "x": 95,
+        "y": 390,
+        "width": 260,
+        "height": 68
+      },
+      "validators": [
+        "required"
+      ],
+      "demo_value": ""
+    },
+    {
+      "id": "signature",
+      "label": "Signature",
+      "type": "ocr",
+      "roi": {
+        "x": 395,
+        "y": 390,
+        "width": 635,
+        "height": 68
+      },
+      "validators": [],
+      "demo_value": ""
+    },
+    {
+      "id": "question_01",
+      "label": "Question 1",
+      "type": "omr",
+      "roi": {
+        "x": 157,
+        "y": 560,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_02",
+      "label": "Question 2",
+      "type": "omr",
+      "roi": {
+        "x": 157,
+        "y": 642,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_03",
+      "label": "Question 3",
+      "type": "omr",
+      "roi": {
+        "x": 157,
+        "y": 724,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_04",
+      "label": "Question 4",
+      "type": "omr",
+      "roi": {
+        "x": 157,
+        "y": 806,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_05",
+      "label": "Question 5",
+      "type": "omr",
+      "roi": {
+        "x": 692,
+        "y": 560,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_06",
+      "label": "Question 6",
+      "type": "omr",
+      "roi": {
+        "x": 692,
+        "y": 642,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_07",
+      "label": "Question 7",
+      "type": "omr",
+      "roi": {
+        "x": 692,
+        "y": 724,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    },
+    {
+      "id": "question_08",
+      "label": "Question 8",
+      "type": "omr",
+      "roi": {
+        "x": 692,
+        "y": 806,
+        "width": 268,
+        "height": 54
+      },
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "validators": [
+        "required",
+        "single_choice"
+      ]
+    }
+  ]
+}

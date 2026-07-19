@@ -1,0 +1,23 @@
+# Virtual environments
+.venv/
+venv/
+
+# Downloaded datasets and generated data
+data/external/
+data/outputs/
+
+# Downloaded models and framework caches
+formvision/models/
+
+# Generated demo results
+demo/**/results/
+
+# Python caches and builds
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/

@@ -1,0 +1,17 @@
+{
+  "image": "demo\\omr_admission\\images\\clean\\student_002.png",
+  "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+  "student_code": "02015838",
+  "full_name": "EMILY ROJAS",
+  "exam_date": "2026-06-12",
+  "answers": {
+    "question_01": "D",
+    "question_02": "A",
+    "question_03": "B",
+    "question_04": "C",
+    "question_05": "D",
+    "question_06": "A",
+    "question_07": "B",
+    "question_08": "C"
+  }
+}

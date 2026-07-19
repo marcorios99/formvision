@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FormVision Layout Editor</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        --ink: #172033;
+        --muted: #687385;
+        --line: #d9dee8;
+        --panel: #f7f8fb;
+        --surface: #ffffff;
+        --accent: #1f6feb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: #ffffff;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        padding: 12px 18px;
+      }
+
+      h1 {
+        font-size: 17px;
+        line-height: 1.2;
+        margin: 0 0 2px;
+      }
+
+      p {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        min-height: calc(100vh - 58px);
+      }
+
+      aside {
+        background: var(--panel);
+        border-right: 1px solid var(--line);
+        overflow: auto;
+        padding: 14px;
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 650;
+        margin: 0 0 5px;
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+        font-size: 13px;
+        min-height: 34px;
+        padding: 7px 9px;
+      }
+
+      button {
+        background: #172033;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      button.secondary {
+        background: #fff;
+        color: var(--ink);
+      }
+
+      button.ghost {
+        background: #fff;
+        color: var(--ink);
+        width: auto;
+      }
+
+      button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      button.danger {
+        background: #9d2424;
+      }
+
+      .grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .control {
+        margin-bottom: 11px;
+      }
+
+      .actions {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1fr 1fr;
+        margin-bottom: 10px;
+      }
+
+      .editor {
+        border-top: 1px solid var(--line);
+        margin-top: 14px;
+        padding-top: 14px;
+      }
+
+      .legend {
+        display: grid;
+        gap: 7px;
+        margin-top: 14px;
+      }
+
+      .legend-item {
+        align-items: center;
+        display: flex;
+        font-size: 12px;
+        gap: 8px;
+      }
+
+      .swatch {
+        border-radius: 999px;
+        display: inline-block;
+        height: 12px;
+        width: 12px;
+      }
+
+      .summary {
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+        margin-top: 14px;
+        padding-top: 12px;
+      }
+
+      .stage {
+        background: #eef1f6;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .view-toolbar {
+        align-items: center;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        gap: 8px;
+        min-height: 46px;
+        padding: 8px 12px;
+      }
+
+      .view-toolbar button {
+        flex: 0 0 auto;
+        min-height: 30px;
+        padding: 5px 9px;
+      }
+
+      .zoom-readout {
+        color: var(--muted);
+        font-size: 12px;
+        min-width: 48px;
+        text-align: center;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .view-hint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .viewport {
+        min-height: 0;
+        overflow: auto;
+        padding: 18px;
+      }
+
+      .canvas-wrap {
+        align-items: flex-start;
+        display: inline-flex;
+        min-height: 100%;
+        min-width: 100%;
+      }
+
+      canvas {
+        background: #fff;
+        box-shadow: 0 10px 28px rgba(30, 42, 62, 0.18);
+        display: block;
+        height: auto;
+        max-width: none;
+      }
+
+      @media (max-width: 860px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+
+        aside {
+          border-bottom: 1px solid var(--line);
+          border-right: 0;
+        }
+
+        canvas {
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>FormVision Layout Editor</h1>
+      <p>Open an image and a JSON layout, adjust ROIs, then save the JSON back to disk.</p>
+    </header>
+    <main>
+      <aside>
+        <div class="control">
+          <label for="imageInput">Image</label>
+          <input id="imageInput" type="file" accept="image/*" />
+        </div>
+
+        <div class="actions">
+          <button id="openJsonButton" type="button">Open JSON</button>
+          <button id="saveJsonButton" type="button">Save JSON</button>
+        </div>
+        <button class="secondary" id="downloadJsonButton" type="button">Download JSON</button>
+
+        <div class="editor">
+          <div class="control">
+            <label for="fieldSelect">Selected Field</label>
+            <select id="fieldSelect"></select>
+          </div>
+
+          <div class="control">
+            <label for="fieldId">ID</label>
+            <input id="fieldId" />
+          </div>
+          <div class="control">
+            <label for="fieldLabel">Label</label>
+            <input id="fieldLabel" />
+          </div>
+          <div class="control">
+            <label for="fieldType">Type</label>
+            <select id="fieldType">
+              <option value="qr">qr</option>
+              <option value="ocr">ocr</option>
+              <option value="icr">icr</option>
+              <option value="omr">omr</option>
+            </select>
+          </div>
+
+          <div class="grid">
+            <div class="control">
+              <label for="fieldX">X</label>
+              <input id="fieldX" type="number" />
+            </div>
+            <div class="control">
+              <label for="fieldY">Y</label>
+              <input id="fieldY" type="number" />
+            </div>
+            <div class="control">
+              <label for="fieldWidth">Width</label>
+              <input id="fieldWidth" type="number" />
+            </div>
+            <div class="control">
+              <label for="fieldHeight">Height</label>
+              <input id="fieldHeight" type="number" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="addFieldButton" type="button">Add Field</button>
+            <button class="danger" id="deleteFieldButton" type="button">Delete</button>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item"><span class="swatch" style="background:#2f80ed"></span>QR</div>
+          <div class="legend-item"><span class="swatch" style="background:#219653"></span>OCR</div>
+          <div class="legend-item"><span class="swatch" style="background:#f2994a"></span>ICR</div>
+          <div class="legend-item"><span class="swatch" style="background:#bb6bd9"></span>OMR</div>
+          <div class="legend-item"><span class="swatch" style="background:#4f4f4f"></span>Other</div>
+        </div>
+
+        <div class="summary" id="summary">Open an image and a JSON layout.</div>
+      </aside>
+      <section class="stage">
+        <div class="view-toolbar">
+          <button class="ghost" id="zoomOutButton" type="button">-</button>
+          <span class="zoom-readout" id="zoomReadout">100%</span>
+          <button class="ghost" id="zoomInButton" type="button">+</button>
+          <button class="ghost" id="fitButton" type="button">Fit</button>
+          <button class="ghost" id="actualSizeButton" type="button">100%</button>
+          <span class="spacer"></span>
+          <span class="view-hint">Use scrollbars to move. Ctrl + wheel zooms.</span>
+        </div>
+        <div class="viewport" id="viewport">
+          <div class="canvas-wrap">
+            <canvas id="canvas"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const imageInput = document.getElementById("imageInput");
+      const openJsonButton = document.getElementById("openJsonButton");
+      const saveJsonButton = document.getElementById("saveJsonButton");
+      const downloadJsonButton = document.getElementById("downloadJsonButton");
+      const addFieldButton = document.getElementById("addFieldButton");
+      const deleteFieldButton = document.getElementById("deleteFieldButton");
+      const fieldSelect = document.getElementById("fieldSelect");
+      const summary = document.getElementById("summary");
+      const viewport = document.getElementById("viewport");
+      const zoomReadout = document.getElementById("zoomReadout");
+      const zoomOutButton = document.getElementById("zoomOutButton");
+      const zoomInButton = document.getElementById("zoomInButton");
+      const fitButton = document.getElementById("fitButton");
+      const actualSizeButton = document.getElementById("actualSizeButton");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const editor = {
+        id: document.getElementById("fieldId"),
+        label: document.getElementById("fieldLabel"),
+        type: document.getElementById("fieldType"),
+        x: document.getElementById("fieldX"),
+        y: document.getElementById("fieldY"),
+        width: document.getElementById("fieldWidth"),
+        height: document.getElementById("fieldHeight"),
+      };
+
+      let loadedImage = null;
+      let layout = null;
+      let jsonHandle = null;
+      let selectedIndex = -1;
+      let dragState = null;
+      let zoom = 1;
+
+      const colors = {
+        qr: "#2f80ed",
+        ocr: "#219653",
+        icr: "#f2994a",
+        omr: "#bb6bd9",
+        other: "#4f4f4f",
+      };
+
+      imageInput.addEventListener("change", async () => {
+        const file = imageInput.files[0];
+        if (!file) return;
+        loadedImage = await readImage(file);
+        render();
+        requestAnimationFrame(fitToViewport);
+      });
+
+      openJsonButton.addEventListener("click", openJson);
+      saveJsonButton.addEventListener("click", saveJson);
+      downloadJsonButton.addEventListener("click", downloadJson);
+      addFieldButton.addEventListener("click", addField);
+      deleteFieldButton.addEventListener("click", deleteField);
+      zoomOutButton.addEventListener("click", () => setZoom(zoom / 1.2));
+      zoomInButton.addEventListener("click", () => setZoom(zoom * 1.2));
+      fitButton.addEventListener("click", fitToViewport);
+      actualSizeButton.addEventListener("click", () => setZoom(1));
+      fieldSelect.addEventListener("change", () => {
+        selectedIndex = Number(fieldSelect.value);
+        syncEditorFromSelection();
+        render();
+      });
+
+      for (const input of Object.values(editor)) {
+        input.addEventListener("input", syncSelectionFromEditor);
+      }
+
+      canvas.addEventListener("pointerdown", onPointerDown);
+      canvas.addEventListener("pointermove", onPointerMove);
+      canvas.addEventListener("pointerup", () => (dragState = null));
+      canvas.addEventListener("pointerleave", () => (dragState = null));
+      viewport.addEventListener("wheel", onWheel, { passive: false });
+
+      async function openJson() {
+        if ("showOpenFilePicker" in window) {
+          [jsonHandle] = await window.showOpenFilePicker({
+            types: [{ description: "JSON", accept: { "application/json": [".json"] } }],
+          });
+          const file = await jsonHandle.getFile();
+          layout = JSON.parse(await file.text());
+        } else {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "application/json,.json";
+          input.onchange = async () => {
+            const file = input.files[0];
+            layout = JSON.parse(await file.text());
+            afterLayoutLoaded();
+          };
+          input.click();
+          return;
+        }
+        afterLayoutLoaded();
+      }
+
+      async function saveJson() {
+        if (!layout) return;
+        const text = JSON.stringify(layout, null, 2) + "\n";
+        if (!jsonHandle || !("createWritable" in jsonHandle)) {
+          downloadJson();
+          return;
+        }
+        const writable = await jsonHandle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        summary.textContent = "Saved JSON to the selected file.";
+      }
+
+      function downloadJson() {
+        if (!layout) return;
+        const blob = new Blob([JSON.stringify(layout, null, 2) + "\n"], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = `${layout.template_id || "layout"}.json`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function afterLayoutLoaded() {
+        selectedIndex = layout.fields?.length ? 0 : -1;
+        refreshFieldList();
+        syncEditorFromSelection();
+        render();
+      }
+
+      function readImage(file) {
+        return new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = URL.createObjectURL(file);
+        });
+      }
+
+      function render() {
+        if (!loadedImage) {
+          summary.textContent = "Load an image to begin.";
+          return;
+        }
+
+        canvas.width = loadedImage.naturalWidth;
+        canvas.height = loadedImage.naturalHeight;
+        applyZoom();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(loadedImage, 0, 0);
+
+        if (!layout) {
+          summary.textContent = "Image loaded. Open a layout JSON.";
+          return;
+        }
+
+        for (let index = 0; index < (layout.fields || []).length; index++) {
+          drawField(layout.fields[index], index === selectedIndex);
+        }
+
+        summary.innerHTML = [
+          `<strong>${layout.template_id}</strong>`,
+          `${layout.fields?.length || 0} fields`,
+          "Drag inside a box to move it. Drag the lower-right handle to resize.",
+        ].join("<br />");
+      }
+
+      function drawField(field, selected) {
+        const rect = toCanvasRect(field.roi);
+        const type = (field.type || "other").toLowerCase();
+        const color = colors[type] || colors.other;
+
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = selected ? 5 : 3;
+        ctx.setLineDash(type === "omr" ? [8, 5] : []);
+        ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+        if (selected) {
+          ctx.setLineDash([]);
+          ctx.fillStyle = color;
+          ctx.fillRect(rect.x + rect.width - 10, rect.y + rect.height - 10, 10, 10);
+        }
+
+        const label = `${field.id} (${type.toUpperCase()})`;
+        ctx.font = "16px Inter, Segoe UI, sans-serif";
+        const labelWidth = ctx.measureText(label).width + 14;
+        ctx.fillStyle = color;
+        ctx.fillRect(rect.x, Math.max(0, rect.y - 24), labelWidth, 22);
+        ctx.fillStyle = "#fff";
+        ctx.fillText(label, rect.x + 7, Math.max(16, rect.y - 8));
+        ctx.restore();
+      }
+
+      function refreshFieldList() {
+        fieldSelect.innerHTML = "";
+        for (let index = 0; index < (layout.fields || []).length; index++) {
+          const field = layout.fields[index];
+          const option = document.createElement("option");
+          option.value = String(index);
+          option.textContent = `${field.id} (${field.type})`;
+          fieldSelect.append(option);
+        }
+        fieldSelect.value = String(selectedIndex);
+      }
+
+      function syncEditorFromSelection() {
+        const field = selectedField();
+        const disabled = !field;
+        for (const input of Object.values(editor)) input.disabled = disabled;
+        deleteFieldButton.disabled = disabled;
+        if (!field) return;
+
+        editor.id.value = field.id || "";
+        editor.label.value = field.label || "";
+        editor.type.value = field.type || "ocr";
+        editor.x.value = field.roi.x;
+        editor.y.value = field.roi.y;
+        editor.width.value = field.roi.width;
+        editor.height.value = field.roi.height;
+      }
+
+      function syncSelectionFromEditor() {
+        const field = selectedField();
+        if (!field) return;
+        field.id = editor.id.value;
+        field.label = editor.label.value;
+        field.type = editor.type.value;
+        field.roi.x = Number(editor.x.value);
+        field.roi.y = Number(editor.y.value);
+        field.roi.width = Number(editor.width.value);
+        field.roi.height = Number(editor.height.value);
+        refreshFieldList();
+        render();
+      }
+
+      function addField() {
+        if (!layout) return;
+        layout.fields ||= [];
+        layout.fields.push({
+          id: `field_${layout.fields.length + 1}`,
+          label: "New Field",
+          type: "ocr",
+          roi: { x: 100, y: 100, width: 240, height: 80 },
+          validators: [],
+        });
+        selectedIndex = layout.fields.length - 1;
+        refreshFieldList();
+        syncEditorFromSelection();
+        render();
+      }
+
+      function deleteField() {
+        if (!layout || selectedIndex < 0) return;
+        layout.fields.splice(selectedIndex, 1);
+        selectedIndex = Math.min(selectedIndex, layout.fields.length - 1);
+        refreshFieldList();
+        syncEditorFromSelection();
+        render();
+      }
+
+      function selectedField() {
+        return layout?.fields?.[selectedIndex] || null;
+      }
+
+      function onPointerDown(event) {
+        if (!layout) return;
+        const point = pointerToCanvas(event);
+        const hit = hitTest(point);
+        if (!hit) return;
+        selectedIndex = hit.index;
+        fieldSelect.value = String(selectedIndex);
+        syncEditorFromSelection();
+        dragState = {
+          mode: hit.mode,
+          start: point,
+          initial: { ...selectedField().roi },
+        };
+        render();
+      }
+
+      function onPointerMove(event) {
+        if (!dragState) return;
+        event.preventDefault();
+        const point = pointerToLayout(pointerToCanvas(event));
+        const start = pointerToLayout(dragState.start);
+        const dx = Math.round(point.x - start.x);
+        const dy = Math.round(point.y - start.y);
+        const field = selectedField();
+        if (!field) return;
+
+        if (dragState.mode === "resize") {
+          field.roi.width = Math.max(8, dragState.initial.width + dx);
+          field.roi.height = Math.max(8, dragState.initial.height + dy);
+        } else {
+          field.roi.x = Math.max(0, dragState.initial.x + dx);
+          field.roi.y = Math.max(0, dragState.initial.y + dy);
+        }
+        syncEditorFromSelection();
+        render();
+      }
+
+      function onWheel(event) {
+        if (!event.ctrlKey || !loadedImage) return;
+        event.preventDefault();
+        const factor = event.deltaY < 0 ? 1.1 : 1 / 1.1;
+        const bounds = canvas.getBoundingClientRect();
+        const anchorX = event.clientX - bounds.left;
+        const anchorY = event.clientY - bounds.top;
+        const oldZoom = zoom;
+        setZoom(zoom * factor);
+        viewport.scrollLeft += anchorX * (zoom / oldZoom - 1);
+        viewport.scrollTop += anchorY * (zoom / oldZoom - 1);
+      }
+
+      function fitToViewport() {
+        if (!loadedImage) return;
+        const availableWidth = Math.max(1, viewport.clientWidth - 36);
+        const availableHeight = Math.max(1, viewport.clientHeight - 36);
+        const nextZoom = Math.min(
+          availableWidth / loadedImage.naturalWidth,
+          availableHeight / loadedImage.naturalHeight,
+          1,
+        );
+        setZoom(nextZoom);
+        viewport.scrollLeft = 0;
+        viewport.scrollTop = 0;
+      }
+
+      function setZoom(nextZoom) {
+        zoom = Math.max(0.08, Math.min(4, nextZoom));
+        applyZoom();
+      }
+
+      function applyZoom() {
+        if (!loadedImage) return;
+        canvas.style.width = `${Math.round(canvas.width * zoom)}px`;
+        zoomReadout.textContent = `${Math.round(zoom * 100)}%`;
+      }
+
+      function hitTest(point) {
+        for (let index = (layout.fields || []).length - 1; index >= 0; index--) {
+          const rect = toCanvasRect(layout.fields[index].roi);
+          const inBox =
+            point.x >= rect.x &&
+            point.x <= rect.x + rect.width &&
+            point.y >= rect.y &&
+            point.y <= rect.y + rect.height;
+          if (!inBox) continue;
+          const inResize =
+            point.x >= rect.x + rect.width - 18 && point.y >= rect.y + rect.height - 18;
+          return { index, mode: inResize ? "resize" : "move" };
+        }
+        return null;
+      }
+
+      function pointerToCanvas(event) {
+        const bounds = canvas.getBoundingClientRect();
+        return {
+          x: ((event.clientX - bounds.left) / bounds.width) * canvas.width,
+          y: ((event.clientY - bounds.top) / bounds.height) * canvas.height,
+        };
+      }
+
+      function pointerToLayout(point) {
+        return {
+          x: (point.x / canvas.width) * layout.page_size.width,
+          y: (point.y / canvas.height) * layout.page_size.height,
+        };
+      }
+
+      function toCanvasRect(rect) {
+        return {
+          x: (rect.x / layout.page_size.width) * canvas.width,
+          y: (rect.y / layout.page_size.height) * canvas.height,
+          width: (rect.width / layout.page_size.width) * canvas.width,
+          height: (rect.height / layout.page_size.height) * canvas.height,
+        };
+      }
+    </script>
+  </body>
+</html>

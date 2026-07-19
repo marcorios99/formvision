@@ -1,0 +1,17 @@
+{
+  "image": "demo\\omr_admission\\images\\clean\\student_001.png",
+  "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+  "student_code": "01007919",
+  "full_name": "ANA NAVARRO",
+  "exam_date": "2026-06-12",
+  "answers": {
+    "question_01": "C",
+    "question_02": "D",
+    "question_03": "A",
+    "question_04": "B",
+    "question_05": "C",
+    "question_06": "D",
+    "question_07": "A",
+    "question_08": "B"
+  }
+}

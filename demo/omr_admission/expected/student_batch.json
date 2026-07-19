@@ -1,0 +1,172 @@
+[
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_001.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "01007919",
+    "full_name": "ANA NAVARRO",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "C",
+      "question_02": "D",
+      "question_03": "A",
+      "question_04": "B",
+      "question_05": "C",
+      "question_06": "D",
+      "question_07": "A",
+      "question_08": "B"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_002.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "02015838",
+    "full_name": "EMILY ROJAS",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "D",
+      "question_02": "A",
+      "question_03": "B",
+      "question_04": "C",
+      "question_05": "D",
+      "question_06": "A",
+      "question_07": "B",
+      "question_08": "C"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_003.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "03023757",
+    "full_name": "MARTA WILLIAMS",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "A",
+      "question_02": "B",
+      "question_03": "C",
+      "question_04": "D",
+      "question_05": "A",
+      "question_06": "B",
+      "question_07": "C",
+      "question_08": "D"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_004.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "04031676",
+    "full_name": "JAMES PAREDES",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "B",
+      "question_02": "C",
+      "question_03": "D",
+      "question_04": "A",
+      "question_05": "B",
+      "question_06": "C",
+      "question_07": "D",
+      "question_08": "A"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_005.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "05039595",
+    "full_name": "SOFIA CASTILLO",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "C",
+      "question_02": "D",
+      "question_03": "A",
+      "question_04": "B",
+      "question_05": "C",
+      "question_06": "D",
+      "question_07": "A",
+      "question_08": "B"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_006.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "06047514",
+    "full_name": "CARLOS VARGAS",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "D",
+      "question_02": "A",
+      "question_03": "B",
+      "question_04": "C",
+      "question_05": "D",
+      "question_06": "A",
+      "question_07": "B",
+      "question_08": "C"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_007.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "07055433",
+    "full_name": "ELENA SMITH",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "A",
+      "question_02": "B",
+      "question_03": "C",
+      "question_04": "D",
+      "question_05": "A",
+      "question_06": "B",
+      "question_07": "C",
+      "question_08": "D"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_008.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "08063352",
+    "full_name": "OLIVER SALAZAR",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "B",
+      "question_02": "C",
+      "question_03": "D",
+      "question_04": "A",
+      "question_05": "B",
+      "question_06": "C",
+      "question_07": "D",
+      "question_08": "A"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_009.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "09071271",
+    "full_name": "VALERIA JOHNSON",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "C",
+      "question_02": "D",
+      "question_03": "A",
+      "question_04": "B",
+      "question_05": "C",
+      "question_06": "D",
+      "question_07": "A",
+      "question_08": "B"
+    }
+  },
+  {
+    "image": "demo\\omr_admission\\images\\clean\\student_010.png",
+    "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+    "student_code": "10079190",
+    "full_name": "MIGUEL TORRES",
+    "exam_date": "2026-06-12",
+    "answers": {
+      "question_01": "D",
+      "question_02": "A",
+      "question_03": "B",
+      "question_04": "C",
+      "question_05": "D",
+      "question_06": "A",
+      "question_07": "B",
+      "question_08": "C"
+    }
+  }
+]

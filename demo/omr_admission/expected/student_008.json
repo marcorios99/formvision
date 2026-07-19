@@ -1,0 +1,17 @@
+{
+  "image": "demo\\omr_admission\\images\\clean\\student_008.png",
+  "exam_code": "EXAM-2026-MATH-A-REGION-07-BATCH-042",
+  "student_code": "08063352",
+  "full_name": "OLIVER SALAZAR",
+  "exam_date": "2026-06-12",
+  "answers": {
+    "question_01": "B",
+    "question_02": "C",
+    "question_03": "D",
+    "question_04": "A",
+    "question_05": "B",
+    "question_06": "C",
+    "question_07": "D",
+    "question_08": "A"
+  }
+}
