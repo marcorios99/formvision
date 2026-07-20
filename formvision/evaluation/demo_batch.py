@@ -28,16 +28,22 @@ def discover_demo_inputs(repo_root: Path) -> dict[str, Any]:
     if not scanned_directory.is_dir() or not expected_directory.is_dir():
         raise DemoInputError("Required demo directories are missing")
     scanned = sorted(scanned_directory.glob("student_*.png"))
-    expected = sorted(expected_directory.glob("student_*.json"))
+    expected = sorted(
+        path for path in expected_directory.glob("student_*.json")
+        if path.name != "student_batch.json"
+    )
     if len(scanned) != 10:
         raise DemoInputError("Expected exactly 10 scanned forms, found {0}".format(len(scanned)))
     scanned_stems = {path.stem for path in scanned}
-    # ``student_batch.json`` is a batch manifest, not an expected form pair.
-    expected_stems = {path.stem for path in expected if path.stem in scanned_stems}
+    expected_stems = {path.stem for path in expected}
     missing_expected = sorted(scanned_stems - expected_stems)
     unexpected_expected = sorted(expected_stems - scanned_stems)
     if missing_expected or unexpected_expected:
-        raise DemoInputError("Scanned/expected pairs do not match: missing={0}; unexpected={1}".format(missing_expected, unexpected_expected))
+        raise DemoInputError(
+            "Scanned/expected pairs do not match: missing={0}; unexpected={1}".format(
+                missing_expected, unexpected_expected
+            )
+        )
     return {
         "template_image": template_image, "layout": layout,
         "scanned_directory": scanned_directory, "expected_directory": expected_directory,
@@ -57,24 +63,56 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
         form = _base_form(image_path, expected_path, inputs["template_image"], repo_root)
         try:
             expected = _load_expected(expected_path)
-            result = pipeline.process(image_path, template, template_image_path=inputs["template_image"], align=True)
+            result = pipeline.process(
+                image_path,
+                template,
+                template_image_path=inputs["template_image"],
+                align=True,
+            )
             form["processing_status"] = result.status
             qr_match = result.document_id == expected["exam_code"]
             qr_total += 1
             qr_correct += int(qr_match)
-            form["qr"] = {"expected": expected["exam_code"], "actual": result.document_id, "barcode_value": result.barcode.value, "template_id": result.template_id, "confidence": result.barcode.confidence, "source": result.barcode.source, "match": qr_match}
+            form["qr"] = {
+                "expected": expected["exam_code"],
+                "actual": result.document_id,
+                "barcode_value": result.barcode.value,
+                "template_id": result.template_id,
+                "confidence": result.barcode.confidence,
+                "source": result.barcode.source,
+                "match": qr_match,
+            }
             form["omr"] = _compare_omr(expected["answers"], result.fields)
             omr_correct += form["omr"]["correct"]
             omr_total += form["omr"]["total"]
             form["ocr"]["fields"] = _non_evaluated_fields(template, result.fields, expected, "ocr")
             form["icr"]["fields"] = _non_evaluated_fields(template, result.fields, expected, "icr")
-        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
+        except Exception as error:
             forms_failed += 1
             form["errors"].append({"type": type(error).__name__, "message": str(error)})
         forms.append(form)
-    summary = {"forms_total": len(forms), "forms_processed": len(forms) - forms_failed, "forms_failed": forms_failed, "qr": _metric(qr_correct, qr_total), "omr": _metric(omr_correct, omr_total), "ocr": {"evaluated": False}, "icr": {"evaluated": False}}
+    summary = {
+        "forms_total": len(forms),
+        "forms_processed": len(forms) - forms_failed,
+        "forms_failed": forms_failed,
+        "qr": _metric(qr_correct, qr_total),
+        "omr": _metric(omr_correct, omr_total),
+        "ocr": {"evaluated": False},
+        "icr": {"evaluated": False},
+    }
     summary["passed"] = forms_failed == 0 and qr_correct == qr_total and omr_correct == omr_total
-    report = {"schema_version": "1.0", "demo": "omr_admission", "generated_at": datetime.now(timezone.utc).isoformat(), "inputs": {key: _relative_path(inputs[key], repo_root) for key in ("template_image", "layout", "scanned_directory", "expected_directory")}, "engines": {"qr": "opencv_qr", "omr": "omr", "ocr": "demo_ocr", "icr": "demo_icr"}, "summary": summary, "forms": forms}
+    report = {
+        "schema_version": "1.0",
+        "demo": "omr_admission",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "inputs": {
+            key: _relative_path(inputs[key], repo_root)
+            for key in ("template_image", "layout", "scanned_directory", "expected_directory")
+        },
+        "engines": {"qr": "opencv_qr", "omr": "omr", "ocr": "demo_ocr", "icr": "demo_icr"},
+        "summary": summary,
+        "forms": forms,
+    }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return report
