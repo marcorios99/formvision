@@ -43,8 +43,8 @@ template.png
 → visualización
 ```
 
-En el estado actual, el archivo físico de la plantilla todavía se llama
-`template.png` es la imagen de referencia usada por el demo.
+La imagen de referencia utilizada por el demo es
+`demo/omr_admission/template/template.png`.
 
 ## Instalación mínima
 
@@ -90,12 +90,6 @@ y metadata, pero no se compara automáticamente con
 - [Datos sintéticos](docs/synthetic-data.md)
 - [Modelos y motores](docs/models.md)
 - [Arquitectura](docs/architecture.md)
-- [Auditoría documental](docs/documentation-audit.md)
-
-Los documentos históricos `docs/flow.md`, `docs/design-decisions.md`,
-`docs/limitations.md`, `docs/current-workflows.md` y
-`demo/omr_admission/README.md` se conservan por ahora; su contenido se está
-consolidando en los documentos anteriores.
 
 ## Limitaciones importantes
 

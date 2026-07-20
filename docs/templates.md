@@ -1,17 +1,16 @@
 # Plantillas y layouts
 
+La imagen base del demo se denomina `template.png` y funciona como referencia
+geométrica para alinear los formularios escaneados.
+
 Una plantilla define la geometría de una página y el layout define cómo
-interpretarla. La nomenclatura objetivo para la imagen base es `template.png`,
-pero durante la transición el archivo físico existente sigue siendo
-`demo/omr_admission/template/template.png`.
+interpretarla.
 
 ## Imagen de referencia
 
 La imagen de referencia es el formulario en blanco, sin respuestas de un
 estudiante. En el demo actual contiene las marcas de alineamiento, cajas,
 etiquetas, burbujas y QR que corresponden al layout.
-
-La ruta equivalente de menor cambio sería:
 
 ```text
 demo/omr_admission/template/
@@ -102,7 +101,4 @@ No existe todavía validación automática de geometría, comparación de campos
 `expected/` ni visualización completa de etapas. Esas capacidades pertenecen a
 hitos posteriores.
 
-## Transición de nomenclatura
-
-Las referencias de código y documentación usan ahora `template.png`. El demo
-continúa bajo `demo/omr_admission`; no se ha movido a `examples/`.
+El demo continúa bajo `demo/omr_admission`; no se ha movido a `examples/`.

@@ -1,29 +1,26 @@
 # OMR Admission Demo
 
-This folder contains the public, portfolio-friendly demo flow.
+Esta carpeta contiene los assets sintéticos de la demostración pública de
+FormVision. El flujo detallado está en [docs/workflows.md](../../docs/workflows.md).
 
-## Structure
+## Estructura
 
 ```text
 template/
-  template.png   Blank answer sheet used by the layout editor.
-  layout.json    ROI definitions for QR/OCR/ICR/OMR fields.
-images/
-  clean/         Generated forms with synthetic student data.
-  scanned/       Scan-like variants with rotation, shift and noise.
+  template.png   Imagen de referencia para el alineamiento.
+  layout.json    Definición de campos y ROIs.
+images/clean/
+  Formularios sintéticos limpios para preparación y depuración.
+images/scanned/
+  Variantes con ruido, rotación y desplazamiento; entrada principal del demo.
 expected/
-  student_batch.json
-results/
-  Generated processing outputs.
+  Ground truth sintético por formulario y manifest del lote.
 ```
 
-## Flow
+`template/template.png` es la referencia geométrica contra la que se alinean los
+formularios de `images/scanned/`.
 
-1. Open `tools/layout_viewer.html`.
-2. Load `template/template.png`.
-3. Load `template/layout.json`.
-4. Adjust ROIs and save the layout JSON.
-5. Process one scanned form:
+## Procesar una muestra
 
 ```bash
 formvision process \
@@ -31,14 +28,5 @@ formvision process \
   --layout demo/omr_admission/template/layout.json \
   --align \
   --template-image demo/omr_admission/template/template.png \
-  --icr-engine mnist \
-  --ocr-engine doctr \
   --json-output data/outputs/student_001_result.json
-```
-
-Regenerate the clean and scanned demo images:
-
-```bash
-python scripts/build_student_batch.py
-python scripts/build_scanned_variants.py
 ```
