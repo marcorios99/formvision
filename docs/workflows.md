@@ -127,7 +127,7 @@ imagen de referencia
 
 La herramienta actual es `tools/layout_viewer.html`. Se carga manualmente una
 imagen y un JSON; se editan id, label, type y ROI; y se guarda o descarga el JSON.
-`formvision generate-omr-sheet` puede crear una imagen sintética y su layout como
+`python scripts/synthetic_cli.py generate-omr-sheet` puede crear una imagen sintética y su layout como
 punto de partida.
 
 Durante esta etapa el archivo físico de la imagen base sigue siendo
@@ -142,10 +142,10 @@ detección automática de campos.
 La ruta modular de la CLI incluye:
 
 ```bash
-formvision generate-omr-sheet
-formvision export-mnist-digits
-formvision compose-digit-strip
-formvision paste-digit-strip
+python scripts/synthetic_cli.py generate-omr-sheet
+python scripts/synthetic_cli.py export-mnist-digits
+python scripts/synthetic_cli.py compose-digit-strip
+python scripts/synthetic_cli.py paste-digit-strip
 ```
 
 La ruta batch recomendada para los assets existentes es:

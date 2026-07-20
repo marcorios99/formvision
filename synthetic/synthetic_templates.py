@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from formvision.config.schema import FormTemplate
-from formvision.layout.mnist_digits import MnistDigitRenderer
+from synthetic.mnist_digits import MnistDigitRenderer
 
 
 class SyntheticFormFactory:

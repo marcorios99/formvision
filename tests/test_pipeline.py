@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from formvision.layout.synthetic_templates import SyntheticOmrSheetFactory
+from synthetic.synthetic_templates import SyntheticOmrSheetFactory
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
 

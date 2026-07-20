@@ -1,10 +1,13 @@
 import json
 from pathlib import Path
+import sys
 
-from formvision.layout.digit_strip import DigitStripFactory
-from formvision.layout.form_overlay import FormOverlay
-from formvision.layout.mnist_exporter import MnistDigitExporter
-from formvision.layout.synthetic_templates import SyntheticOmrSheetFactory
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from synthetic.digit_strip import DigitStripFactory
+from synthetic.form_overlay import FormOverlay
+from synthetic.mnist_exporter import MnistDigitExporter
+from synthetic.synthetic_templates import SyntheticOmrSheetFactory
 
 
 def main() -> None:

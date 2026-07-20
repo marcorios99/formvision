@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from formvision.layout.synthetic_templates import SyntheticOmrSheetFactory
+from synthetic.synthetic_templates import SyntheticOmrSheetFactory
 
 
 def test_synthetic_omr_sheet_generates_image_and_layout(tmp_path: Path):

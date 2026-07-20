@@ -1,1 +1,1 @@
-"""Template loading and synthetic form generation."""
+"""Runtime layout loading and coordinate mapping."""

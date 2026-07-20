@@ -2,7 +2,7 @@ from pathlib import Path
 
 import cv2
 
-from formvision.layout.mnist_digits import MnistDigitRenderer
+from synthetic.mnist_digits import MnistDigitRenderer
 
 
 class MnistDigitExporter:

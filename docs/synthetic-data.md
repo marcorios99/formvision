@@ -78,8 +78,10 @@ de la selección disponible en `data/digits`.
 - `build_scanned_variants.py`: variantes scanned.
 - `build_digit_overlay_example.py`: ejemplo ilustrativo de overlays para una
   sola muestra; se solapa con el batch.
-- `formvision generate-omr-sheet`: generación modular de imagen + layout.
-- `export-mnist-digits`, `compose-digit-strip` y `paste-digit-strip`: operaciones
+- `python scripts/synthetic_cli.py generate-omr-sheet`: generación modular de imagen + layout.
+- `python scripts/synthetic_cli.py export-mnist-digits`,
+  `python scripts/synthetic_cli.py compose-digit-strip` y
+  `python scripts/synthetic_cli.py paste-digit-strip`: operaciones
   auxiliares de bajo nivel.
 
 ## Limitaciones
