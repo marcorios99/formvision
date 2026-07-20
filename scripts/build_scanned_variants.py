@@ -1,8 +1,11 @@
 from pathlib import Path
+import sys
 
 import cv2
 
-from formvision.image_processing.scan_simulator import ScanSimulationConfig, ScanSimulator
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from synthetic.scan_simulator import ScanSimulationConfig, ScanSimulator
 
 
 def main() -> None:
