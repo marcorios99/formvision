@@ -3,7 +3,7 @@ import shutil
 
 import pytest
 
-from formvision.evaluation.demo_batch import DemoInputError, discover_demo_inputs, run_demo_batch
+from demo.omr_admission.evaluation.demo_batch import DemoInputError, discover_demo_inputs, run_demo_batch
 from formvision.pipeline.processor import FormProcessingPipeline
 
 

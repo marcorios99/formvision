@@ -6,7 +6,7 @@ visualización:
 
 ```text
 formvision/    Núcleo Python: configuración, pipeline, extractores y exporters.
-demo/          Assets sintéticos preparados para la demostración.
+demo/          Assets, evaluación y orquestación de la demostración.
 scripts/       Generación de lotes, escaneos y ejemplos.
 training/      Preparación y evaluación local de ICR/OCR.
 tools/         Herramientas standalone; actualmente editor HTML de layouts.
@@ -42,7 +42,7 @@ La CLI expone este pipeline como `formvision process` o
 
 ## Evaluación del demo
 
-`formvision.evaluation.demo_batch` es una capa de orquestación separada del
+`demo.omr_admission.evaluation.demo_batch` es una capa de orquestación separada del
 pipeline. Carga el layout y crea el pipeline una sola vez, procesa los diez
 scanned contra la plantilla, compara QR y OMR con `expected/` y genera
 `data/outputs/demo/report.json`. OCR e ICR se incluyen como resultados no
