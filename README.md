@@ -28,8 +28,8 @@ no para demostrar reconocimiento real.
 Funcionan la generación sintética, la simulación de escaneos, el procesamiento
 individual por CLI, la alineación del page frame, QR/OMR, el ICR MNIST opcional y
 el adaptador OCR docTR opcional. La comparación automática con `expected/`, la
-evaluación del lote, la visualización de etapas y `demo.py` aún no están
-implementados.
+evaluación del lote y `demo.py` ya están disponibles; la visualización de etapas
+sigue pendiente.
 
 El flujo conceptual que se quiere consolidar es:
 
@@ -40,7 +40,7 @@ template.png
 → alineamiento contra la plantilla
 → extracción QR / OCR / ICR / OMR
 → comparación con expected
-→ visualización
+→ reporte JSON de evaluación
 ```
 
 La imagen de referencia utilizada por el demo es
@@ -65,6 +65,18 @@ MNIST requiere sus archivos IDX bajo `data/external/mnist`; docTR descarga o
 utiliza pesos pretrained en su cache durante el primer uso.
 
 ## Ejemplo mínimo actual
+
+El recorrido principal procesa los diez formularios scanned, los alinea contra
+la plantilla y escribe `data/outputs/demo/report.json`:
+
+```bash
+python demo.py
+```
+
+QR y OMR se comparan con `expected/`. OCR e ICR usan motores demo en este
+recorrido, por lo que se registran pero no se evalúan; los motores reales
+siguen siendo opcionales. El reporte HTML y las visualizaciones de etapas
+pertenecen a hitos posteriores.
 
 El repositorio ya contiene muestras preparadas. Este comando procesa una imagen
 scanned con los extractores demo deterministas y escribe un JSON:
@@ -100,8 +112,7 @@ y metadata, pero no se compara automáticamente con
 - La corrección de perspectiva actual está orientada a las marcas de los
   formularios sintéticos.
 - Los resultados sintéticos no son un benchmark de exactitud productiva.
-- La comparación de resultados y la visualización completa de etapas son trabajo
-  pendiente.
+- La visualización completa de etapas y el reporte HTML son trabajo pendiente.
 
 Para ejecutar las pruebas unitarias:
 

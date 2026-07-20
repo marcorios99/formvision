@@ -40,6 +40,16 @@ docs/          Contratos y recorridos documentales.
 La CLI expone este pipeline como `formvision process` o
 `python -m formvision.cli process`.
 
+## Evaluación del demo
+
+`formvision.evaluation.demo_batch` es una capa de orquestación separada del
+pipeline. Carga el layout y crea el pipeline una sola vez, procesa los diez
+scanned contra la plantilla, compara QR y OMR con `expected/` y genera
+`data/outputs/demo/report.json`. OCR e ICR se incluyen como resultados no
+evaluados porque los motores base son demostrativos; los motores reales siguen
+siendo opcionales. No hay reporte HTML ni visualizaciones de etapas en este
+hito.
+
 ## Adaptadores de extracción
 
 - **QR**: `BarcodeExtractor` usa OpenCV sobre la imagen alineada.
@@ -65,8 +75,8 @@ hay entrenamiento OCR local. Los modelos y dependencias opcionales no son
 requisitos del pipeline con motores demo.
 
 `tools/layout_viewer.html` permite inspeccionar y editar ROIs, pero no visualiza
-las etapas internas del pipeline. Tampoco existe todavía evaluación automática
-del lote ni reporte HTML; esos son hitos posteriores.
+las etapas internas del pipeline. La evaluación automática del lote escribe JSON;
+el reporte HTML sigue siendo un hito posterior.
 
 ## Decisiones y limitaciones arquitectónicas
 
@@ -77,5 +87,4 @@ del lote ni reporte HTML; esos son hitos posteriores.
 - La alineación está orientada a páginas sintéticas con marcas de referencia.
 - La comparación con `expected/` no pertenece todavía al pipeline implementado;
   debe añadirse como una etapa de evaluación separada.
-- La visualización de imágenes intermedias, resultados por lote y reporte HTML
-  aún no existen.
+- La visualización de imágenes intermedias y el reporte HTML aún no existen.

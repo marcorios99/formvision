@@ -53,7 +53,21 @@ docTR crea el predictor pretrained bajo demanda y cachea sus pesos en
 La demostración ya contiene assets preparados, por lo que esta preparación no es
 necesaria para el primer recorrido.
 
-## 2. Ejecutar el flujo principal actual
+## 2. Ejecutar el flujo principal
+
+El recorrido principal del demo es:
+
+```bash
+python demo.py
+```
+
+Procesa los diez archivos de `images/scanned/`, los alinea con
+`template/template.png`, compara QR y OMR contra `expected/` y escribe
+`data/outputs/demo/report.json`. OCR e ICR se registran con motores demo y no
+se evalúan; los motores reales son opcionales. El reporte HTML y las
+visualizaciones de etapas pertenecen a hitos posteriores.
+
+## 3. Procesar un formulario con la CLI avanzada
 
 El camino que funciona hoy con dependencias base es:
 
@@ -99,7 +113,7 @@ python -m formvision.cli inspect-layout \
 ruta rígida que duplica `process`, fuerza MNIST y docTR y tampoco compara
 `expected/`.
 
-## 3. Crear o editar una plantilla
+## 4. Crear o editar una plantilla
 
 El recorrido conceptual es:
 
@@ -123,7 +137,7 @@ Tras guardar el layout, `inspect-layout` permite verificar visualmente las ROIs 
 `process` permite probar una imagen. No hay validación geométrica completa ni
 detección automática de campos.
 
-## 4. Generar datos sintéticos
+## 5. Generar datos sintéticos
 
 La ruta modular de la CLI incluye:
 
@@ -151,7 +165,7 @@ variante ilustrativa y se solapa con el batch.
 El batch recrea `template.png` y `layout.json`, por lo que no debe ejecutarse sobre
 un layout editado sin conservar una copia previa.
 
-## 5. Entrenar o evaluar modelos
+## 6. Entrenar o evaluar modelos
 
 Este recorrido es avanzado y opcional.
 
@@ -185,6 +199,5 @@ El futuro golden path que se quiere adoptar será:
 python demo.py
 ```
 
-`demo.py` todavía no existe y no forma parte del funcionamiento actual. La
-comparación automática del lote, los artefactos visuales completos y el reporte
-HTML también quedan para hitos posteriores.
+`demo.py` es una demostración de integración, no un benchmark productivo. Los
+artefactos visuales completos y el reporte HTML quedan para hitos posteriores.

@@ -22,6 +22,20 @@ formularios de `images/scanned/`.
 
 ## Procesar una muestra
 
+Para ejecutar el lote público completo desde la raíz del repositorio:
+
+```bash
+python demo.py
+```
+
+El comando usa exclusivamente `images/scanned/`, alinea contra
+`template/template.png`, compara QR y OMR con `expected/` y escribe
+`data/outputs/demo/report.json`. OCR e ICR se registran con motores demo, por
+lo que no se evalúan; los motores reales siguen siendo opcionales. El reporte
+HTML y las visualizaciones de etapas pertenecen a hitos posteriores.
+
+## Procesar una muestra con la CLI avanzada
+
 ```bash
 formvision process \
   --image demo/omr_admission/images/scanned/student_001.png \
