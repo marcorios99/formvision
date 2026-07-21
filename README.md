@@ -18,10 +18,10 @@ precisión productiva ni modelos privados.
 - **ICR**: lectura acotada de dígitos manuscritos separados; el motor real usa
   segmentación y un modelo pequeño basado en MNIST.
 
-El pipeline también incluye validación y exportación JSON, CSV o SQLite. Los
-motores `DemoOcrExtractor` y `DemoIcrExtractor` son simuladores: devuelven el
-`demo_value` configurado en `layout.json` y sirven para probar la orquestación,
-no para demostrar reconocimiento real.
+El pipeline también incluye validación y exportación JSON, CSV o SQLite. El
+Core requiere motores OCR e ICR configurados explícitamente; los adaptadores
+simulados temporales viven bajo `demo/omr_admission/extractors/` y no forman
+parte de FormVision distribuible.
 
 ## Estado actual
 
@@ -78,8 +78,8 @@ recorrido, por lo que se registran pero no se evalúan; los motores reales
 siguen siendo opcionales. El reporte HTML y las visualizaciones de etapas
 pertenecen a hitos posteriores.
 
-El repositorio ya contiene muestras preparadas. Este comando procesa una imagen
-scanned con los extractores demo deterministas y escribe un JSON:
+El repositorio ya contiene muestras preparadas. Para procesar el layout completo
+desde la CLI se deben configurar los motores reales:
 
 ```bash
 python -m formvision.cli process \
@@ -87,12 +87,15 @@ python -m formvision.cli process \
   --layout demo/omr_admission/template/layout.json \
   --align \
   --template-image demo/omr_admission/template/template.png \
+  --icr-engine mnist \
+  --ocr-engine doctr \
   --json-output data/outputs/student_001_result.json
 ```
 
-Para usar los motores opcionales, se añaden `--icr-engine mnist` y/o
-`--ocr-engine doctr`. El resultado contiene QR, fields, confianza, validaciones
-y metadata, pero no se compara automáticamente con
+Un layout que solo contenga QR/OMR puede procesarse sin esos flags. La demo
+`python demo.py` inyecta temporalmente sus adaptadores simulados para conservar
+su recorrido actual, donde OCR e ICR no se evalúan. El resultado de la CLI
+contiene QR, fields, confianza, validaciones y metadata, pero no se compara automáticamente con
 `demo/omr_admission/expected/student_001.json`.
 
 ## Documentación

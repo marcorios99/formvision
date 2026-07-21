@@ -1,1 +1,1 @@
-"""Field extractors for QR, OCR/ICR placeholders and OMR."""
+"""Field extractors for QR, OCR, ICR and OMR."""

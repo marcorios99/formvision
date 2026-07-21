@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from demo.omr_admission.extractors import DemoIcrExtractor, DemoOcrExtractor
 from synthetic.synthetic_templates import SyntheticOmrSheetFactory
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
@@ -15,7 +16,10 @@ def test_pipeline_processes_synthetic_form(tmp_path: Path):
     )
     template = TemplateLoader().load(layout_path)
 
-    result = FormProcessingPipeline().process(image_path, template)
+    result = FormProcessingPipeline(
+        ocr_extractor=DemoOcrExtractor(),
+        icr_extractor=DemoIcrExtractor(),
+    ).process(image_path, template)
 
     assert result.document_id
     assert result.fields["student_code"].valid
@@ -46,7 +50,10 @@ def test_pipeline_aligns_to_template_before_extraction(tmp_path: Path):
     )
     template = TemplateLoader().load(input_layout)
 
-    result = FormProcessingPipeline().process(
+    result = FormProcessingPipeline(
+        ocr_extractor=DemoOcrExtractor(),
+        icr_extractor=DemoIcrExtractor(),
+    ).process(
         input_image,
         template,
         template_image_path=template_image,

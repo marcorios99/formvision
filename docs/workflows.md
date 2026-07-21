@@ -69,7 +69,8 @@ visualizaciones de etapas pertenecen a hitos posteriores.
 
 ## 3. Procesar un formulario con la CLI avanzada
 
-El camino que funciona hoy con dependencias base es:
+Un layout que solo contiene QR/OMR puede ejecutarse con dependencias base. El
+layout completo de la demo requiere los motores reales:
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -78,12 +79,14 @@ python -m formvision.cli process \
   --layout demo/omr_admission/template/layout.json \
   --align \
   --template-image demo/omr_admission/template/template.png \
+  --icr-engine mnist \
+  --ocr-engine doctr \
   --json-output data/outputs/student_001_result.json
 ```
 
 Esto carga el layout, alinea el page frame, elimina guías magenta, intenta leer
-QR, extrae OMR y ejecuta los motores demo para OCR/ICR, valida y escribe JSON.
-Los motores demo devuelven `demo_value`; no son reconocimiento real.
+QR, extrae OMR y ejecuta los motores configurados para OCR/ICR, valida y escribe
+JSON. La CLI del Core no ofrece motores `demo`.
 
 Para activar motores opcionales:
 

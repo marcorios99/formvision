@@ -33,3 +33,35 @@ def test_runtime_and_synthetic_clis_expose_separate_commands() -> None:
         "paste-digit-strip",
     ):
         assert command in synthetic.stdout
+
+
+def test_runtime_process_requires_real_engines_for_demo_layout() -> None:
+    help_result = subprocess.run(
+        [sys.executable, "-m", "formvision.cli", "process", "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "formvision.cli",
+            "process",
+            "--image",
+            "missing.png",
+            "--layout",
+            "demo/omr_admission/template/layout.json",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "{demo" not in help_result.stdout
+    assert "{mnist}" in help_result.stdout
+    assert "{doctr}" in help_result.stdout
+    assert result.returncode != 0
+    assert "ICR fields require --icr-engine mnist." in result.stderr
+    assert "Traceback" not in result.stderr

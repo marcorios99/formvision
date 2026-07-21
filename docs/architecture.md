@@ -54,11 +54,15 @@ hito.
 
 - **QR**: `BarcodeExtractor` usa OpenCV sobre la imagen alineada.
 - **OMR**: `OmrExtractor` puntúa las opciones configuradas en el ROI.
-- **ICR**: por defecto `DemoIcrExtractor`; opcionalmente
-  `MnistDigitIcrEngine` segmenta candidatos y los compara contra muestras y
-  prototipos MNIST.
-- **OCR**: por defecto `DemoOcrExtractor`; opcionalmente `DoctrOcrEngine`
+- **ICR**: requiere un motor configurado explícitamente; `MnistDigitIcrEngine`
+  segmenta candidatos y los compara contra muestras y prototipos MNIST.
+- **OCR**: requiere un motor configurado explícitamente; `DoctrOcrEngine`
   construye un predictor docTR pretrained.
+
+Los adaptadores temporales `DemoOcrExtractor` y `DemoIcrExtractor` viven bajo
+`demo/omr_admission/extractors/`. `python demo.py` los inyecta para conservar la
+demostración actual, donde OCR e ICR no se evalúan; el Core no usa fallbacks
+simulados.
 
 Los motores demo reciben el `demo_value` del field y lo devuelven como valor
 simulado. No inspeccionan la imagen para reconocer texto o escritura. Esto hace

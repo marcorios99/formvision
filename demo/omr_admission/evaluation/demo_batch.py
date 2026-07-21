@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from demo.omr_admission.extractors import DemoIcrExtractor, DemoOcrExtractor
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
 
@@ -57,7 +58,10 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
     inputs = discover_demo_inputs(repo_root)
     output_path = (output_path or repo_root / "data" / "outputs" / "demo" / "report.json").resolve()
     template = TemplateLoader().load(inputs["layout"])
-    pipeline = FormProcessingPipeline()
+    pipeline = FormProcessingPipeline(
+        ocr_extractor=DemoOcrExtractor(),
+        icr_extractor=DemoIcrExtractor(),
+    )
     forms, qr_correct, qr_total, omr_correct, omr_total, forms_failed = [], 0, 0, 0, 0, 0
     for image_path, expected_path in inputs["pairs"]:
         form = _base_form(image_path, expected_path, inputs["template_image"], repo_root)

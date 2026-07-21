@@ -24,9 +24,9 @@ def main() -> None:
     process.add_argument("--layout", default="demo/omr_admission/template/layout.json")
     process.add_argument("--template-image")
     process.add_argument("--align", action="store_true")
-    process.add_argument("--icr-engine", choices=("demo", "mnist"), default="demo")
+    process.add_argument("--icr-engine", choices=("mnist",))
     process.add_argument("--icr-model", default="formvision/models/mnist_digit_prototypes.npz")
-    process.add_argument("--ocr-engine", choices=("demo", "doctr"), default="demo")
+    process.add_argument("--ocr-engine", choices=("doctr",))
     process.add_argument("--doctr-det-arch", default="fast_tiny")
     process.add_argument("--doctr-reco-arch", default="crnn_mobilenet_v3_small")
     process.add_argument("--json-output", default="data/outputs/sample_001.json")
@@ -53,6 +53,12 @@ def main() -> None:
         cv2.imwrite(str(output), preview)
         print(f"Wrote layout preview: {output}")
         return
+
+    field_types = {field.type for field in template.fields}
+    if "icr" in field_types and args.icr_engine != "mnist":
+        parser.error("ICR fields require --icr-engine mnist.")
+    if "ocr" in field_types and args.ocr_engine != "doctr":
+        parser.error("OCR fields require --ocr-engine doctr.")
 
     icr_extractor = None
     if args.icr_engine == "mnist":

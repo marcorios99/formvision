@@ -3,10 +3,8 @@ from pathlib import Path
 
 from formvision.config.schema import FormTemplate
 from formvision.extractors.barcode_extractor import BarcodeExtractor
-from formvision.extractors.icr_extractor import DemoIcrExtractor
 from formvision.extractors.icr.base import IcrEngine
 from formvision.extractors.ocr.base import OcrEngine
-from formvision.extractors.ocr.demo import DemoOcrExtractor
 from formvision.extractors.omr_extractor import OmrExtractor
 from formvision.image_processing.color_dropout import MagentaDropout
 from formvision.image_processing.loader import ImageLoader
@@ -40,8 +38,8 @@ class FormProcessingPipeline:
         self.frame_normalizer = frame_normalizer or PageFrameNormalizer()
         self.magenta_dropout = magenta_dropout or MagentaDropout()
         self.omr_extractor = omr_extractor or OmrExtractor()
-        self.ocr_extractor = ocr_extractor or DemoOcrExtractor()
-        self.icr_extractor = icr_extractor or DemoIcrExtractor()
+        self.ocr_extractor = ocr_extractor
+        self.icr_extractor = icr_extractor
         self.validator = validator or FieldValidator()
 
     def process(
@@ -125,8 +123,18 @@ class FormProcessingPipeline:
         if field.type == "omr":
             return self.omr_extractor.extract(roi, field)
         if field.type == "icr":
+            if self.icr_extractor is None:
+                raise RuntimeError(
+                    f"ICR engine is required for field '{field.id}'. "
+                    "Configure FormProcessingPipeline(icr_extractor=...)."
+                )
             return self.icr_extractor.extract(roi, field.demo_value)
         if field.type == "ocr":
+            if self.ocr_extractor is None:
+                raise RuntimeError(
+                    f"OCR engine is required for field '{field.id}'. "
+                    "Configure FormProcessingPipeline(ocr_extractor=...)."
+                )
             return self.ocr_extractor.extract(roi, field.demo_value)
         raise ValueError(f"Unsupported field type: {field.type}")
 

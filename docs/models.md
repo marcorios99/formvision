@@ -1,8 +1,8 @@
 # Modelos y motores
 
-FormVision tiene tres categorías de motores: ICR real pequeño basado en MNIST,
-OCR real opcional pretrained y motores demo simulados. Solo los dos primeros
-requieren dependencias o artefactos adicionales.
+FormVision contiene ICR real pequeño basado en MNIST y OCR real opcional
+pretrained. Ambos deben configurarse explícitamente cuando el layout los
+requiere.
 
 ## ICR: dígitos manuscritos
 
@@ -61,21 +61,24 @@ python training/evaluate_ocr.py \
   --field-id full_name
 ```
 
-OCR es opcional y no es requisito para ejecutar la demo con motores simulados.
+OCR es opcional para layouts sin campos OCR; la demo conserva temporalmente sus
+adaptadores simulados fuera del Core.
 
 ## Motores simulados
 
-`DemoOcrExtractor` y `DemoIcrExtractor` implementan las interfaces de OCR e ICR
-sin reconocer la imagen. Reciben `demo_value` desde el field del layout y lo
+`DemoOcrExtractor` y `DemoIcrExtractor` viven temporalmente en
+`demo/omr_admission/extractors/`. Implementan las interfaces de OCR e ICR sin
+reconocer la imagen. Reciben `demo_value` desde el field del layout y lo
 devuelven; si el valor es `None`, usan valores de ejemplo predeterminados.
 
-Estos motores sirven para probar carga, ordenamiento, validación y exportación
-del pipeline sin modelos. Sus valores no deben presentarse como reconocimiento
-real ni utilizarse para medir OCR/ICR.
+La demostración los inyecta explícitamente. El pipeline y la CLI del Core no
+tienen fallback simulado: los campos OCR/ICR requieren motores reales
+configurados. Sus valores no deben presentarse como reconocimiento real ni
+utilizarse para medir OCR/ICR.
 
 ## Separación de responsabilidades
 
 La generación sintética puede usar MNIST como fuente visual de dígitos, pero eso
 no equivale a entrenar el modelo ICR. El entrenamiento ICR y la configuración
-OCR son recorridos avanzados opcionales; el flujo principal con `process` puede
-ejecutarse con los motores demo y dependencias base.
+OCR son recorridos avanzados opcionales; un layout QR/OMR puede procesarse con
+dependencias base, mientras que un layout con OCR/ICR requiere sus motores.

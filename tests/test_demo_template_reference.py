@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from demo.omr_admission.extractors import DemoIcrExtractor, DemoOcrExtractor
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
 
@@ -19,7 +20,10 @@ def test_scanned_demo_uses_template_reference_and_expected_omr_answers() -> None
     assert layout_path.is_file()
 
     template = TemplateLoader().load(layout_path)
-    result = FormProcessingPipeline().process(
+    result = FormProcessingPipeline(
+        ocr_extractor=DemoOcrExtractor(),
+        icr_extractor=DemoIcrExtractor(),
+    ).process(
         scanned_image,
         template,
         template_image_path=template_image,
