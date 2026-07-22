@@ -7,7 +7,8 @@ visualización:
 ```text
 formvision/    Núcleo Python: configuración, pipeline, extractores y exporters.
 demo/          Assets, evaluación y orquestación de la demostración.
-scripts/       Generación de lotes, escaneos y ejemplos.
+synthetic/     Plantillas, formularios sintéticos, overlays, dígitos y variantes de escaneo.
+scripts/       Entrypoints pequeños y recorridos de preparación que consumen las capas correspondientes.
 training/      Preparación y evaluación local de ICR/OCR.
 tools/         Herramientas standalone; actualmente editor HTML de layouts.
 data/          MNIST externo, dígitos generados y salidas de trabajo.
@@ -44,11 +45,12 @@ La CLI expone este pipeline como `formvision process` o
 
 `demo.omr_admission.evaluation.demo_batch` es una capa de orquestación separada del
 pipeline. Carga el layout y crea el pipeline una sola vez, procesa los diez
-scanned contra la plantilla, compara QR y OMR con `expected/` y genera
-`data/outputs/demo/report.json`. OCR e ICR se incluyen como resultados no
-evaluados porque los motores base son demostrativos; los motores reales siguen
-siendo opcionales. No hay reporte HTML ni visualizaciones de etapas en este
-hito.
+scanned, los alinea contra `template/template.png`, compara QR y OMR con
+`expected/` y genera `data/outputs/demo/report.json`. Continúa registrando
+errores por formulario. OCR e ICR se incluyen como resultados no evaluados; los
+adaptadores temporales de la demo se inyectan desde `demo/`, no desde el Core.
+No hay reporte HTML ni visualizaciones de etapas en este hito. `expected/` será renombrado física y conceptualmente a `ground_truth/` en el
+siguiente subhito, pero conserva por ahora su nombre actual.
 
 ## Adaptadores de extracción
 
@@ -62,21 +64,33 @@ hito.
 Los adaptadores temporales `DemoOcrExtractor` y `DemoIcrExtractor` viven bajo
 `demo/omr_admission/extractors/`. `python demo.py` los inyecta para conservar la
 demostración actual, donde OCR e ICR no se evalúan; el Core no usa fallbacks
-simulados.
-
+simulados ni los incluye en el paquete distribuible. `FormProcessingPipeline`
+requiere motores OCR/ICR configurados explícitamente
+cuando el layout contiene campos de esos tipos, y la CLI del Core solo ofrece
+MNIST para ICR y docTR para OCR.
 Los motores demo reciben el `demo_value` del field y lo devuelven como valor
 simulado. No inspeccionan la imagen para reconocer texto o escritura. Esto hace
 posible probar la orquestación sin instalar modelos.
 
 ## Fronteras del proyecto
 
-La generación sintética en `formvision/layout/` y `scripts/` crea plantillas,
-formularios clean, variantes scanned y ground truth. No forma parte del núcleo
-de extracción, aunque produce sus entradas.
+La generación sintética fue retirada de `formvision/layout/` y vive en
+`synthetic/`: crea plantillas, formularios clean, overlays, dígitos y variantes
+scanned. Los scripts pueden invocar esa lógica, pero no son su ubicación
+reutilizable principal. La dirección de dependencias es:
+
+```text
+demo ──────────┐
+synthetic ─────┼──► formvision
+training ──────┤
+tools ─────────┘
+```
+
+`formvision/` no depende de ninguna de esas capas.
 
 `training/` prepara el modelo ICR de prototipos y ofrece evaluadores por ROI; no
 hay entrenamiento OCR local. Los modelos y dependencias opcionales no son
-requisitos del pipeline con motores demo.
+requisitos de layouts que no contienen campos OCR/ICR.
 
 `tools/layout_viewer.html` permite inspeccionar y editar ROIs, pero no visualiza
 las etapas internas del pipeline. La evaluación automática del lote escribe JSON;
@@ -89,6 +103,8 @@ el reporte HTML sigue siendo un hito posterior.
 - El ICR inicial está deliberadamente limitado a dígitos manuscritos separados.
 - docTR es opcional porque añade dependencias pesadas y descarga pesos.
 - La alineación está orientada a páginas sintéticas con marcas de referencia.
-- La comparación con `expected/` no pertenece todavía al pipeline implementado;
-  debe añadirse como una etapa de evaluación separada.
+- La evaluación actual de la demo compara QR y OMR con `expected/`; OCR e ICR
+  reales todavía no se evalúan en el lote completo.
+- `demo_value` y los extractores simulados temporales permanecen fuera del Core
+  para sostener la demo actual hasta el hito de motores reales.
 - La visualización de imágenes intermedias y el reporte HTML aún no existen.
