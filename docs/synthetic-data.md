@@ -47,9 +47,10 @@ Por cada clean se escribe un JSON en `ground_truth/` con imagen, código de exam
 código de estudiante, nombre, fecha y respuestas. `student_batch.json` contiene
 el manifest completo.
 
-La relación entre scanned y ground truth se asume por el mismo nombre de estudiante.
-El código actual no lee estos archivos para comparar automáticamente con los
-resultados; esa evaluación será un hito posterior.
+`python demo.py` y `demo.omr_admission.evaluation.demo_batch` leen los JSON de
+`ground_truth/`, emparejan cada scanned con el mismo nombre de estudiante y
+comparan automáticamente QR y OMR. OCR e ICR se registran como no evaluados; la
+evaluación completa con motores reales pertenece a los siguientes subhitos.
 
 ## MNIST opcional
 

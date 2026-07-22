@@ -97,8 +97,10 @@ imagen de referencia
 → process sobre una imagen scanned
 ```
 
-No existe todavía validación automática de geometría, comparación de campos con
-`ground_truth/` ni visualización completa de etapas. Esas capacidades pertenecen a
-hitos posteriores.
+`inspect-layout` solo visualiza las ROIs. `formvision process` procesa una imagen,
+pero no compara automáticamente su salida contra un JSON de `ground_truth/`.
+`python demo.py` sí compara automáticamente el lote para QR y OMR. Todavía no
+existen validación geométrica completa ni visualizaciones completas de las etapas,
+y OCR e ICR reales aún no se evalúan en la demo completa.
 
 El demo continúa bajo `demo/omr_admission`; no se ha movido a `examples/`.
