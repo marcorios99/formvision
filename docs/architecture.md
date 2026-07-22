@@ -46,11 +46,10 @@ La CLI expone este pipeline como `formvision process` o
 `demo.omr_admission.evaluation.demo_batch` es una capa de orquestación separada del
 pipeline. Carga el layout y crea el pipeline una sola vez, procesa los diez
 scanned, los alinea contra `template/template.png`, compara QR y OMR con
-`expected/` y genera `data/outputs/demo/report.json`. Continúa registrando
+`ground_truth/` y genera `data/outputs/demo/report.json`. Continúa registrando
 errores por formulario. OCR e ICR se incluyen como resultados no evaluados; los
 adaptadores temporales de la demo se inyectan desde `demo/`, no desde el Core.
-No hay reporte HTML ni visualizaciones de etapas en este hito. `expected/` será renombrado física y conceptualmente a `ground_truth/` en el
-siguiente subhito, pero conserva por ahora su nombre actual.
+No hay reporte HTML ni visualizaciones de etapas en este hito.
 
 ## Adaptadores de extracción
 
@@ -103,7 +102,7 @@ el reporte HTML sigue siendo un hito posterior.
 - El ICR inicial está deliberadamente limitado a dígitos manuscritos separados.
 - docTR es opcional porque añade dependencias pesadas y descarga pesos.
 - La alineación está orientada a páginas sintéticas con marcas de referencia.
-- La evaluación actual de la demo compara QR y OMR con `expected/`; OCR e ICR
+- La evaluación actual de la demo compara QR y OMR con `ground_truth/`; OCR e ICR
   reales todavía no se evalúan en el lote completo.
 - `demo_value` y los extractores simulados temporales permanecen fuera del Core
   para sostener la demo actual hasta el hito de motores reales.
