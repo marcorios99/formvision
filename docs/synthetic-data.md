@@ -16,8 +16,8 @@ códigos de ocho dígitos, una fecha y respuestas A/B/C/D deterministas. Escribe
 
 ```text
 demo/omr_admission/images/clean/student_001.png ... student_010.png
-demo/omr_admission/expected/student_001.json ... student_010.json
-demo/omr_admission/expected/student_batch.json
+demo/omr_admission/ground_truth/student_001.json ... student_010.json
+demo/omr_admission/ground_truth/student_batch.json
 ```
 
 También crea `data/digits/0..9/` a partir de MNIST y vuelve a crear la plantilla
@@ -43,11 +43,11 @@ depuración, no el camino final de lectura.
 
 ## Ground truth
 
-Por cada clean se escribe un JSON en `expected/` con imagen, código de examen,
+Por cada clean se escribe un JSON en `ground_truth/` con imagen, código de examen,
 código de estudiante, nombre, fecha y respuestas. `student_batch.json` contiene
 el manifest completo.
 
-La relación entre scanned y expected se asume por el mismo nombre de estudiante.
+La relación entre scanned y ground truth se asume por el mismo nombre de estudiante.
 El código actual no lee estos archivos para comparar automáticamente con los
 resultados; esa evaluación será un hito posterior.
 
@@ -74,7 +74,7 @@ de la selección disponible en `data/digits`.
 
 ## Scripts actuales
 
-- `build_student_batch.py`: plantilla base, clean, expected y manifest.
+- `build_student_batch.py`: plantilla base, clean, ground truth y manifest.
 - `build_scanned_variants.py`: variantes scanned.
 - `build_digit_overlay_example.py`: ejemplo ilustrativo de overlays para una
   sola muestra; se solapa con el batch.
@@ -91,5 +91,5 @@ de la selección disponible en `data/digits`.
 - Regenera `template.png` y `layout.json`, por lo que puede sobrescribir una edición
   manual del layout.
 - La simulación de escaneo conserva la correspondencia por nombre, pero no
-  verifica que expected y resultado sean consistentes.
+  verifica que ground truth y resultado sean consistentes.
 - Los valores sintéticos no constituyen un benchmark OCR/ICR/OMR.

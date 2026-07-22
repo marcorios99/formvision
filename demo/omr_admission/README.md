@@ -13,7 +13,7 @@ images/clean/
   Formularios sintéticos limpios para preparación y depuración.
 images/scanned/
   Variantes con ruido, rotación y desplazamiento; entrada principal del demo.
-expected/
+ground_truth/
   Ground truth sintético por formulario y manifest del lote.
 ```
 
@@ -29,7 +29,7 @@ python demo.py
 ```
 
 El comando usa exclusivamente `images/scanned/`, alinea contra
-`template/template.png`, compara QR y OMR con `expected/` y escribe
+`template/template.png`, compara QR y OMR con `ground_truth/` y escribe
 `data/outputs/demo/report.json`. OCR e ICR se registran con motores demo, por
 lo que no se evalúan; los motores reales siguen siendo opcionales. El reporte
 HTML y las visualizaciones de etapas pertenecen a hitos posteriores.

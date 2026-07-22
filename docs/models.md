@@ -34,7 +34,7 @@ python training/evaluate_icr.py \
 ```
 
 El evaluador imprime valor, confianza y metadata. No calcula exactitud contra
-`expected/`. `training/train_digit_sequence.py` es solamente un stub para una
+`ground_truth/`. `training/train_digit_sequence.py` es solamente un stub para una
 futura ruta CNN/CTC y no debe describirse como entrenamiento implementado.
 
 ### Limitaciones ICR

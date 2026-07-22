@@ -13,7 +13,7 @@ plantilla sintética + layout
 → valores ficticios
 → formularios clean
 → variantes scanned
-→ expected/
+→ ground_truth/
 → modelo ICR MNIST opcional
 → OCR docTR pretrained opcional
 ```
@@ -26,8 +26,8 @@ python scripts/build_scanned_variants.py
 ```
 
 `build_student_batch.py` exporta dígitos MNIST a `data/digits`, recrea la hoja
-base y `layout.json`, genera diez formularios clean y escribe un JSON expected por
-estudiante más `expected/student_batch.json`. Requiere los archivos IDX de MNIST
+base y `layout.json`, genera diez formularios clean y escribe un JSON de ground truth por
+estudiante más `ground_truth/student_batch.json`. Requiere los archivos IDX de MNIST
 aunque no carga el modelo `.npz` de ICR.
 
 `build_scanned_variants.py` aplica rotación, desplazamiento y ruido a los clean y
@@ -62,7 +62,7 @@ python demo.py
 ```
 
 Procesa los diez archivos de `images/scanned/`, los alinea con
-`template/template.png`, compara QR y OMR contra `expected/` y escribe
+`template/template.png`, compara QR y OMR contra `ground_truth/` y escribe
 `data/outputs/demo/report.json`. OCR e ICR se registran con motores demo y no
 se evalúan; los motores reales son opcionales. El reporte HTML y las
 visualizaciones de etapas pertenecen a hitos posteriores.
@@ -102,7 +102,7 @@ python -m formvision.cli process \
 ```
 
 El resultado actual no compara automáticamente con
-`demo/omr_admission/expected/student_001.json` y no genera imágenes de etapas.
+`demo/omr_admission/ground_truth/student_001.json` y no genera imágenes de etapas.
 La comparación es manual y `inspect-layout` solo dibuja las ROIs:
 
 ```bash
@@ -114,7 +114,7 @@ python -m formvision.cli inspect-layout \
 
 `python scripts/process_demo_batch.py` procesa todos los scanned, pero es una
 ruta rígida que duplica `process`, fuerza MNIST y docTR y tampoco compara
-`expected/`.
+`ground_truth/`.
 
 ## 4. Crear o editar una plantilla
 
@@ -156,12 +156,12 @@ La ruta batch recomendada para los assets existentes es:
 ```text
 template/layout base
 → build_student_batch.py
-→ images/clean + expected/
+→ images/clean + ground_truth/
 → build_scanned_variants.py
 → images/scanned
 ```
 
-La correspondencia clean/scanned/expected se mantiene por nombre de estudiante;
+La correspondencia clean/scanned/ground truth se mantiene por nombre de estudiante;
 no existe un verificador automático. `build_digit_overlay_example.py` es una
 variante ilustrativa y se solapa con el batch.
 
@@ -184,7 +184,7 @@ python training/evaluate_ocr.py \
 
 El entrenamiento produce el modelo de prototipos ICR; el evaluador OCR usa
 docTR pretrained. Ambos evaluadores trabajan sobre un ROI y escriben métricas
-descriptivas en stdout, pero no comparan contra `expected/` ni producen un
+descriptivas en stdout, pero no comparan contra `ground_truth/` ni producen un
 reporte de lote.
 
 ## CLI avanzada

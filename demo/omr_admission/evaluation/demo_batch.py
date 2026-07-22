@@ -22,33 +22,33 @@ def discover_demo_inputs(repo_root: Path) -> dict[str, Any]:
     template_image = demo_root / "template" / "template.png"
     layout = demo_root / "template" / "layout.json"
     scanned_directory = demo_root / "images" / "scanned"
-    expected_directory = demo_root / "expected"
+    ground_truth_directory = demo_root / "ground_truth"
     for path, label in ((template_image, "template.png"), (layout, "layout.json")):
         if not path.is_file():
             raise DemoInputError("Required demo input is missing: {0}".format(label))
-    if not scanned_directory.is_dir() or not expected_directory.is_dir():
+    if not scanned_directory.is_dir() or not ground_truth_directory.is_dir():
         raise DemoInputError("Required demo directories are missing")
     scanned = sorted(scanned_directory.glob("student_*.png"))
-    expected = sorted(
-        path for path in expected_directory.glob("student_*.json")
+    ground_truth = sorted(
+        path for path in ground_truth_directory.glob("student_*.json")
         if path.name != "student_batch.json"
     )
     if len(scanned) != 10:
         raise DemoInputError("Expected exactly 10 scanned forms, found {0}".format(len(scanned)))
     scanned_stems = {path.stem for path in scanned}
-    expected_stems = {path.stem for path in expected}
-    missing_expected = sorted(scanned_stems - expected_stems)
-    unexpected_expected = sorted(expected_stems - scanned_stems)
-    if missing_expected or unexpected_expected:
+    ground_truth_stems = {path.stem for path in ground_truth}
+    missing_ground_truth = sorted(scanned_stems - ground_truth_stems)
+    unexpected_ground_truth = sorted(ground_truth_stems - scanned_stems)
+    if missing_ground_truth or unexpected_ground_truth:
         raise DemoInputError(
-            "Scanned/expected pairs do not match: missing={0}; unexpected={1}".format(
-                missing_expected, unexpected_expected
+            "Scanned/ground truth pairs do not match: missing={0}; unexpected={1}".format(
+                missing_ground_truth, unexpected_ground_truth
             )
         )
     return {
         "template_image": template_image, "layout": layout,
-        "scanned_directory": scanned_directory, "expected_directory": expected_directory,
-        "pairs": [(image, expected_directory / (image.stem + ".json")) for image in scanned],
+        "scanned_directory": scanned_directory, "ground_truth_directory": ground_truth_directory,
+        "pairs": [(image, ground_truth_directory / (image.stem + ".json")) for image in scanned],
     }
 
 
@@ -63,10 +63,10 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
         icr_extractor=DemoIcrExtractor(),
     )
     forms, qr_correct, qr_total, omr_correct, omr_total, forms_failed = [], 0, 0, 0, 0, 0
-    for image_path, expected_path in inputs["pairs"]:
-        form = _base_form(image_path, expected_path, inputs["template_image"], repo_root)
+    for image_path, ground_truth_path in inputs["pairs"]:
+        form = _base_form(image_path, ground_truth_path, inputs["template_image"], repo_root)
         try:
-            expected = _load_expected(expected_path)
+            expected = _load_ground_truth(ground_truth_path)
             result = pipeline.process(
                 image_path,
                 template,
@@ -111,7 +111,7 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "inputs": {
             key: _relative_path(inputs[key], repo_root)
-            for key in ("template_image", "layout", "scanned_directory", "expected_directory")
+            for key in ("template_image", "layout", "scanned_directory", "ground_truth_directory")
         },
         "engines": {"qr": "opencv_qr", "omr": "omr", "ocr": "demo_ocr", "icr": "demo_icr"},
         "summary": summary,
@@ -122,12 +122,12 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
     return report
 
 
-def _base_form(image_path: Path, expected_path: Path, template_image: Path, root: Path) -> dict[str, Any]:
+def _base_form(image_path: Path, ground_truth_path: Path, template_image: Path, root: Path) -> dict[str, Any]:
     placeholder = {"evaluated": False, "reason": "Demo extractor does not perform image recognition.", "fields": {}}
-    return {"student_id": image_path.stem, "image": _relative_path(image_path, root), "expected_file": _relative_path(expected_path, root), "processing_status": "failed", "alignment": {"enabled": True, "template_image": _relative_path(template_image, root)}, "qr": None, "omr": None, "ocr": dict(placeholder), "icr": dict(placeholder), "errors": []}
+    return {"student_id": image_path.stem, "image": _relative_path(image_path, root), "ground_truth_file": _relative_path(ground_truth_path, root), "processing_status": "failed", "alignment": {"enabled": True, "template_image": _relative_path(template_image, root)}, "qr": None, "omr": None, "ocr": dict(placeholder), "icr": dict(placeholder), "errors": []}
 
 
-def _load_expected(path: Path) -> dict[str, Any]:
+def _load_ground_truth(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as file:
         return json.load(file)
 

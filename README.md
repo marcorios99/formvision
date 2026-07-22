@@ -6,7 +6,7 @@ localiza un QR, recorta campos, aplica extractores OCR/ICR/OMR, valida valores y
 exporta un resultado estructurado.
 
 Todo el material del repositorio es sintético o público: formularios generados,
-identidades ficticias, respuestas ficticias, datos `expected/` y un modelo ICR
+identidades ficticias, respuestas ficticias, datos de ground truth y un modelo ICR
 pequeño derivado de MNIST. No representa datos reales, reglas de negocio,
 precisión productiva ni modelos privados.
 
@@ -27,7 +27,7 @@ parte de FormVision distribuible.
 
 Funcionan la generación sintética, la simulación de escaneos, el procesamiento
 individual por CLI, la alineación del page frame, QR/OMR, el ICR MNIST opcional y
-el adaptador OCR docTR opcional. La comparación automática con `expected/`, la
+el adaptador OCR docTR opcional. La comparación automática con `ground_truth/`, la
 evaluación del lote y `demo.py` ya están disponibles; la visualización de etapas
 sigue pendiente.
 
@@ -73,7 +73,7 @@ la plantilla y escribe `data/outputs/demo/report.json`:
 python demo.py
 ```
 
-QR y OMR se comparan con `expected/`. OCR e ICR usan motores demo en este
+QR y OMR se comparan con `ground_truth/`. OCR e ICR usan motores demo en este
 recorrido, por lo que se registran pero no se evalúan; los motores reales
 siguen siendo opcionales. El reporte HTML y las visualizaciones de etapas
 pertenecen a hitos posteriores.
@@ -96,7 +96,7 @@ Un layout que solo contenga QR/OMR puede procesarse sin esos flags. La demo
 `python demo.py` inyecta temporalmente sus adaptadores simulados para conservar
 su recorrido actual, donde OCR e ICR no se evalúan. El resultado de la CLI
 contiene QR, fields, confianza, validaciones y metadata, pero no se compara automáticamente con
-`demo/omr_admission/expected/student_001.json`.
+`demo/omr_admission/ground_truth/student_001.json`.
 
 ## Documentación
 

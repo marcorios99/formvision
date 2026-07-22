@@ -24,6 +24,8 @@ def test_demo_batch_evaluates_public_scanned_forms(tmp_path: Path) -> None:
     assert report["summary"]["passed"] is True
     assert report["forms"][0]["student_id"] == "student_001"
     assert report["forms"][-1]["student_id"] == "student_010"
+    assert "ground_truth_directory" in report["inputs"]
+    assert "expected_directory" not in report["inputs"]
     for form in report["forms"]:
         assert form["alignment"]["enabled"] is True
         assert form["qr"]["expected"] == form["qr"]["actual"]
@@ -31,25 +33,27 @@ def test_demo_batch_evaluates_public_scanned_forms(tmp_path: Path) -> None:
         assert form["ocr"]["evaluated"] is False
         assert form["icr"]["evaluated"] is False
         assert not form["errors"]
+        assert "ground_truth_file" in form
+        assert "expected_file" not in form
         assert "\\" not in form["image"]
         assert not Path(form["image"]).is_absolute()
 
 
-def test_discovery_rejects_unexpected_expected_file(tmp_path: Path) -> None:
+def test_discovery_rejects_unexpected_ground_truth_file(tmp_path: Path) -> None:
     demo_root = tmp_path / "demo" / "omr_admission"
     template_dir = demo_root / "template"
     scanned_dir = demo_root / "images" / "scanned"
-    expected_dir = demo_root / "expected"
+    ground_truth_dir = demo_root / "ground_truth"
     template_dir.mkdir(parents=True)
     scanned_dir.mkdir(parents=True)
-    expected_dir.mkdir(parents=True)
+    ground_truth_dir.mkdir(parents=True)
     shutil.copy2(ROOT / "demo" / "omr_admission" / "template" / "template.png", template_dir / "template.png")
     shutil.copy2(ROOT / "demo" / "omr_admission" / "template" / "layout.json", template_dir / "layout.json")
     for index in range(1, 11):
         stem = "student_{0:03d}".format(index)
         (scanned_dir / (stem + ".png")).touch()
-        (expected_dir / (stem + ".json")).write_text("{}", encoding="utf-8")
-    (expected_dir / "student_011.json").write_text("{}", encoding="utf-8")
+        (ground_truth_dir / (stem + ".json")).write_text("{}", encoding="utf-8")
+    (ground_truth_dir / "student_011.json").write_text("{}", encoding="utf-8")
 
     with pytest.raises(DemoInputError, match="student_011"):
         discover_demo_inputs(tmp_path)

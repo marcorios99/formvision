@@ -42,7 +42,7 @@ def main() -> None:
     demo_dir = Path("demo/omr_admission")
     template_dir = demo_dir / "template"
     clean_images_dir = demo_dir / "images/clean"
-    expected_dir = demo_dir / "expected"
+    ground_truth_dir = demo_dir / "ground_truth"
 
     exam_code = "EXAM-2026-MATH-A-REGION-07-BATCH-042"
     exam_date = "2026-06-12"
@@ -132,15 +132,15 @@ def main() -> None:
             }
         )
 
-    expected_dir.mkdir(parents=True, exist_ok=True)
+    ground_truth_dir.mkdir(parents=True, exist_ok=True)
     for student in students:
         image_name = Path(student["image"]).stem
-        (expected_dir / f"{image_name}.json").write_text(
+        (ground_truth_dir / f"{image_name}.json").write_text(
             json.dumps(student, indent=2),
             encoding="utf-8",
         )
 
-    manifest_path = expected_dir / "student_batch.json"
+    manifest_path = ground_truth_dir / "student_batch.json"
     manifest_path.write_text(json.dumps(students, indent=2), encoding="utf-8")
 
     print(f"Generated {len(students)} student images in {clean_images_dir}")

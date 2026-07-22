@@ -98,7 +98,7 @@ imagen de referencia
 ```
 
 No existe todavía validación automática de geometría, comparación de campos con
-`expected/` ni visualización completa de etapas. Esas capacidades pertenecen a
+`ground_truth/` ni visualización completa de etapas. Esas capacidades pertenecen a
 hitos posteriores.
 
 El demo continúa bajo `demo/omr_admission`; no se ha movido a `examples/`.
