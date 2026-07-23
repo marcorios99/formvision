@@ -30,9 +30,14 @@ python demo.py
 
 El comando usa exclusivamente `images/scanned/`, alinea contra
 `template/template.png`, compara QR y OMR con `ground_truth/` y escribe
-`data/outputs/demo/report.json`. OCR e ICR se registran con motores demo, por
-lo que no se evalúan; los motores reales siguen siendo opcionales. El reporte
-HTML y las visualizaciones de etapas pertenecen a hitos posteriores.
+`data/outputs/demo/report.json`. OCR se ejecuta con docTR e ICR con el modelo
+MNIST preparado; sus resultados se registran, pero todavía no se evalúan contra
+ground truth. Antes de ejecutar la demo, prepara el modelo con
+`python training/train_mnist_digit.py` e instala OCR con
+`python -m pip install -e ".[ocr]"`. El primer uso de docTR puede descargar
+pesos en la ubicación predeterminada `formvision/models/doctr_cache/`, que puede
+cambiarse con `DOCTR_CACHE_DIR`. El reporte HTML y las visualizaciones de etapas
+pertenecen a hitos posteriores.
 
 ## Procesar una muestra con la CLI avanzada
 

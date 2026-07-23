@@ -61,8 +61,10 @@ python training/evaluate_ocr.py \
   --field-id full_name
 ```
 
-OCR es opcional para layouts sin campos OCR; la demo conserva temporalmente sus
-adaptadores simulados fuera del Core.
+OCR es opcional para layouts sin campos OCR. La demo principal configura docTR
+junto con `MnistDigitIcrEngine`; antes de ejecutarla se debe preparar el modelo
+ICR con `python training/train_mnist_digit.py` e instalar el extra `ocr`. El
+primer uso de docTR puede descargar pesos al caché configurado.
 
 ## Motores simulados
 
@@ -71,10 +73,10 @@ adaptadores simulados fuera del Core.
 reconocer la imagen. Reciben `demo_value` desde el field del layout y lo
 devuelven; si el valor es `None`, usan valores de ejemplo predeterminados.
 
-La demostración los inyecta explícitamente. El pipeline y la CLI del Core no
-tienen fallback simulado: los campos OCR/ICR requieren motores reales
-configurados. Sus valores no deben presentarse como reconocimiento real ni
-utilizarse para medir OCR/ICR.
+Permanecen temporalmente para el Hito 3.3, pero la demostración principal ya no
+los inyecta. El pipeline y la CLI del Core no tienen fallback simulado: los
+campos OCR/ICR requieren motores reales configurados. Los resultados reales de
+la demo todavía no se utilizan para medir OCR/ICR.
 
 ## Separación de responsabilidades
 

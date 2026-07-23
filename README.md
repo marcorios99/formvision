@@ -54,15 +54,19 @@ Se requiere Python >= 3.10:
 python -m pip install -e ".[dev]"
 ```
 
-MNIST y docTR son extras, no requisitos del flujo principal:
+`python demo.py` requiere el modelo ICR ya generado en
+`formvision/models/mnist_digit_prototypes.npz` y el extra OCR:
 
 ```bash
-python -m pip install -e ".[mnist]"
 python -m pip install -e ".[ocr]"
 ```
 
-MNIST requiere sus archivos IDX bajo `data/external/mnist`; docTR descarga o
-utiliza pesos pretrained en su cache durante el primer uso.
+Genera el modelo ICR con `python training/train_mnist_digit.py`; el entrenamiento
+requiere los archivos IDX de MNIST bajo `data/external/mnist` y no los descarga
+automáticamente. El extra `mnist` instala Torch/torchvision para tareas
+opcionales relacionadas con MNIST, pero no es necesario para inferir el `.npz`
+ya generado. docTR descarga o utiliza pesos pretrained en su cache durante el
+primer uso.
 
 ## Ejemplo mínimo actual
 
@@ -73,10 +77,9 @@ la plantilla y escribe `data/outputs/demo/report.json`:
 python demo.py
 ```
 
-QR y OMR se comparan con `ground_truth/`. OCR e ICR usan motores demo en este
-recorrido, por lo que se registran pero no se evalúan; los motores reales
-siguen siendo opcionales. El reporte HTML y las visualizaciones de etapas
-pertenecen a hitos posteriores.
+QR y OMR se comparan con `ground_truth/`. OCR se ejecuta con docTR e ICR con el
+modelo MNIST preparado; sus resultados se registran, pero todavía no se puntúan.
+El reporte HTML y las visualizaciones de etapas pertenecen a hitos posteriores.
 
 El repositorio ya contiene muestras preparadas. Para procesar el layout completo
 desde la CLI se deben configurar los motores reales:
@@ -93,8 +96,9 @@ python -m formvision.cli process \
 ```
 
 Un layout que solo contenga QR/OMR puede procesarse sin esos flags. La demo
-`python demo.py` inyecta temporalmente sus adaptadores simulados para conservar
-su recorrido actual, donde OCR e ICR no se evalúan. El resultado de la CLI
+`python demo.py` configura los motores reales; los adaptadores simulados
+temporales permanecen en el repositorio hasta el Hito 3.3, pero no se usan en
+el recorrido principal. El resultado de la CLI
 contiene QR, fields, confianza, validaciones y metadata, pero no se compara automáticamente con
 `demo/omr_admission/ground_truth/student_001.json`.
 

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from demo.omr_admission.evaluation.demo_batch import DemoInputError, run_demo_batch
+from demo.omr_admission.runtime import DemoEngineError
 
 
 def main() -> int:
@@ -13,13 +14,17 @@ def main() -> int:
     except DemoInputError as error:
         print("FormVision demo input error: {0}".format(error))
         return 1
+    except DemoEngineError as error:
+        print("FormVision demo configuration error: {0}".format(error))
+        return 1
     summary = report["summary"]
+    engines = report["engines"]
     print("FormVision demo")
     print("Processed forms: {0}/{1}".format(summary["forms_processed"], summary["forms_total"]))
     print("QR accuracy: {0}/{1} ({2:.2%})".format(summary["qr"]["correct"], summary["qr"]["total"], summary["qr"]["accuracy"]))
     print("OMR accuracy: {0}/{1} ({2:.2%})".format(summary["omr"]["correct"], summary["omr"]["total"], summary["omr"]["accuracy"]))
-    print("OCR: not evaluated (demo engine)")
-    print("ICR: not evaluated (demo engine)")
+    print("OCR: executed with {0} (not evaluated)".format(engines["ocr"]))
+    print("ICR: executed with {0} (not evaluated)".format(engines["icr"]))
     print("Report: {0}".format(report_path.relative_to(root).as_posix()))
-    print("Status: {0}".format("PASS" if summary["passed"] else "FAIL"))
+    print("Evaluation status: {0} (QR/OMR only)".format("PASS" if summary["passed"] else "FAIL"))
     return 0 if summary["passed"] else 1

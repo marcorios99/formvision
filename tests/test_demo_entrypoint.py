@@ -6,6 +6,7 @@ def test_demo_main_returns_zero_when_batch_passes(monkeypatch, capsys) -> None:
         demo,
         "run_demo_batch",
         lambda root, report_path: {
+            "engines": {"ocr": "doctr", "icr": "mnist_icr"},
             "summary": {
                 "forms_processed": 10,
                 "forms_total": 10,
@@ -17,7 +18,11 @@ def test_demo_main_returns_zero_when_batch_passes(monkeypatch, capsys) -> None:
     )
 
     assert demo.main() == 0
-    assert "Status: PASS" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "OCR: executed with doctr (not evaluated)" in output
+    assert "ICR: executed with mnist_icr (not evaluated)" in output
+    assert "Evaluation status: PASS (QR/OMR only)" in output
+    assert "demo engine" not in output
 
 
 def test_demo_main_returns_one_when_batch_fails(monkeypatch, capsys) -> None:
@@ -25,6 +30,7 @@ def test_demo_main_returns_one_when_batch_fails(monkeypatch, capsys) -> None:
         demo,
         "run_demo_batch",
         lambda root, report_path: {
+            "engines": {"ocr": "doctr", "icr": "mnist_icr"},
             "summary": {
                 "forms_processed": 9,
                 "forms_total": 10,
@@ -36,7 +42,7 @@ def test_demo_main_returns_one_when_batch_fails(monkeypatch, capsys) -> None:
     )
 
     assert demo.main() == 1
-    assert "Status: FAIL" in capsys.readouterr().out
+    assert "Evaluation status: FAIL (QR/OMR only)" in capsys.readouterr().out
 
 
 def test_demo_main_returns_one_for_invalid_demo_inputs(monkeypatch, capsys) -> None:
@@ -48,3 +54,14 @@ def test_demo_main_returns_one_for_invalid_demo_inputs(monkeypatch, capsys) -> N
 
     assert demo.main() == 1
     assert "FormVision demo input error: missing layout" in capsys.readouterr().out
+
+
+def test_demo_main_returns_one_for_engine_configuration_error(monkeypatch, capsys) -> None:
+    monkeypatch.setattr(
+        demo,
+        "run_demo_batch",
+        lambda root, report_path: (_ for _ in ()).throw(demo.DemoEngineError("install OCR")),
+    )
+
+    assert demo.main() == 1
+    assert "FormVision demo configuration error: install OCR" in capsys.readouterr().out

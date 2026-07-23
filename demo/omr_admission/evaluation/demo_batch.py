@@ -7,9 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from demo.omr_admission.extractors import DemoIcrExtractor, DemoOcrExtractor
+from demo.omr_admission.runtime import DemoRuntime, build_demo_runtime
 from formvision.layout.template_loader import TemplateLoader
-from formvision.pipeline.processor import FormProcessingPipeline
 
 
 class DemoInputError(ValueError):
@@ -52,16 +51,19 @@ def discover_demo_inputs(repo_root: Path) -> dict[str, Any]:
     }
 
 
-def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str, Any]:
+def run_demo_batch(
+    repo_root: Path,
+    output_path: Path | None = None,
+    runtime: DemoRuntime | None = None,
+) -> dict[str, Any]:
     """Run the demo once and write a deterministic, human-readable JSON report."""
     repo_root = repo_root.resolve()
     inputs = discover_demo_inputs(repo_root)
     output_path = (output_path or repo_root / "data" / "outputs" / "demo" / "report.json").resolve()
     template = TemplateLoader().load(inputs["layout"])
-    pipeline = FormProcessingPipeline(
-        ocr_extractor=DemoOcrExtractor(),
-        icr_extractor=DemoIcrExtractor(),
-    )
+    if runtime is None:
+        runtime = build_demo_runtime(repo_root)
+    pipeline = runtime.pipeline
     forms, qr_correct, qr_total, omr_correct, omr_total, forms_failed = [], 0, 0, 0, 0, 0
     for image_path, ground_truth_path in inputs["pairs"]:
         form = _base_form(image_path, ground_truth_path, inputs["template_image"], repo_root)
@@ -74,6 +76,12 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
                 align=True,
             )
             form["processing_status"] = result.status
+            non_evaluated_reason = (
+                "The real extraction engine ran, but its result is not evaluated against ground truth "
+                "until a later submilestone."
+            )
+            form["ocr"]["reason"] = non_evaluated_reason
+            form["icr"]["reason"] = non_evaluated_reason
             qr_match = result.document_id == expected["exam_code"]
             qr_total += 1
             qr_correct += int(qr_match)
@@ -113,7 +121,7 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
             key: _relative_path(inputs[key], repo_root)
             for key in ("template_image", "layout", "scanned_directory", "ground_truth_directory")
         },
-        "engines": {"qr": "opencv_qr", "omr": "omr", "ocr": "demo_ocr", "icr": "demo_icr"},
+        "engines": {"qr": "opencv_qr", "omr": "omr", "ocr": runtime.ocr_engine, "icr": runtime.icr_engine},
         "summary": summary,
         "forms": forms,
     }
@@ -123,7 +131,7 @@ def run_demo_batch(repo_root: Path, output_path: Path | None = None) -> dict[str
 
 
 def _base_form(image_path: Path, ground_truth_path: Path, template_image: Path, root: Path) -> dict[str, Any]:
-    placeholder = {"evaluated": False, "reason": "Demo extractor does not perform image recognition.", "fields": {}}
+    placeholder = {"evaluated": False, "reason": "The result is not available because form processing did not complete successfully.", "fields": {}}
     return {"student_id": image_path.stem, "image": _relative_path(image_path, root), "ground_truth_file": _relative_path(ground_truth_path, root), "processing_status": "failed", "alignment": {"enabled": True, "template_image": _relative_path(template_image, root)}, "qr": None, "omr": None, "ocr": dict(placeholder), "icr": dict(placeholder), "errors": []}
 
 
@@ -147,7 +155,13 @@ def _non_evaluated_fields(template: Any, fields: dict[str, Any], expected: dict[
     for field in sorted(template.fields, key=lambda item: item.id):
         if field.type == field_type:
             result = fields[field.id]
-            values[field.id] = {"expected": expected.get(field.id), "actual": result.value, "source": result.source}
+            values[field.id] = {
+                "expected": expected.get(field.id),
+                "actual": result.value,
+                "confidence": result.confidence,
+                "source": result.source,
+                "metadata": result.metadata,
+            }
     return values
 
 

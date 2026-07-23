@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import numpy as np
+
 from formvision.extractors.base import Extraction
 from formvision.extractors.ocr.base import OcrEngine
 
@@ -18,27 +20,32 @@ class DoctrOcrEngine(OcrEngine):
         reco_arch: str = "crnn_mobilenet_v3_small",
         assume_straight_pages: bool = True,
         cache_dir: str | Path = "formvision/models/doctr_cache",
+        predictor=None,
     ) -> None:
-        os.environ.setdefault("DOCTR_CACHE_DIR", str(Path(cache_dir)))
-        Path(os.environ["DOCTR_CACHE_DIR"]).mkdir(parents=True, exist_ok=True)
-        try:
-            from doctr.models import ocr_predictor
-        except ImportError as exc:
-            raise RuntimeError(
-                'docTR is not installed. Install it with: pip install -e ".[ocr]"'
-            ) from exc
+        self.cache_dir = Path(os.environ.setdefault("DOCTR_CACHE_DIR", str(Path(cache_dir))))
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.det_arch = det_arch
         self.reco_arch = reco_arch
         self.assume_straight_pages = assume_straight_pages
-        self.predictor = ocr_predictor(
-            det_arch=det_arch,
-            reco_arch=reco_arch,
-            pretrained=True,
-            assume_straight_pages=assume_straight_pages,
-        )
+        if predictor is not None:
+            self.predictor = predictor
+        else:
+            try:
+                from doctr.models import ocr_predictor
+            except ImportError as exc:
+                raise RuntimeError(
+                    'docTR is not installed. Install it with: python -m pip install -e ".[ocr]"'
+                ) from exc
+            self.predictor = ocr_predictor(
+                det_arch=det_arch,
+                reco_arch=reco_arch,
+                pretrained=True,
+                assume_straight_pages=assume_straight_pages,
+            )
 
     def extract(self, roi, demo_value: str | None = None) -> Extraction:
-        result = self.predictor([roi])
+        rgb_roi = np.ascontiguousarray(roi[..., ::-1])
+        result = self.predictor([rgb_roi])
         words: list[str] = []
         confidences: list[float] = []
         for page in result.pages:

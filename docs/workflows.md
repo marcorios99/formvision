@@ -47,8 +47,9 @@ Para OCR real opcional:
 python -m pip install -e ".[ocr]"
 ```
 
-docTR crea el predictor pretrained bajo demanda y cachea sus pesos en
-`formvision/models/doctr_cache`.
+docTR crea el predictor pretrained bajo demanda y cachea sus pesos en la
+ubicación predeterminada `formvision/models/doctr_cache`, configurable mediante
+`DOCTR_CACHE_DIR`.
 
 La demostración ya contiene assets preparados, por lo que esta preparación no es
 necesaria para el primer recorrido.
@@ -63,9 +64,12 @@ python demo.py
 
 Procesa los diez archivos de `images/scanned/`, los alinea con
 `template/template.png`, compara QR y OMR contra `ground_truth/` y escribe
-`data/outputs/demo/report.json`. OCR e ICR se registran con motores demo y no
-se evalúan; los motores reales son opcionales. El reporte HTML y las
-visualizaciones de etapas pertenecen a hitos posteriores.
+`data/outputs/demo/report.json`. Ejecuta OCR con docTR e ICR con MNIST; ambos
+resultados se registran, pero todavía no se evalúan. Antes de este recorrido se
+debe preparar el modelo ICR e instalar el extra `ocr`; el primer uso de docTR
+puede descargar pesos en la ubicación predeterminada
+`formvision/models/doctr_cache`, configurable mediante `DOCTR_CACHE_DIR`. El
+reporte HTML y las visualizaciones de etapas pertenecen a hitos posteriores.
 
 ## 3. Procesar un formulario con la CLI avanzada
 

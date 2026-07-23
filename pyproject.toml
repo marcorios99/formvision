@@ -18,7 +18,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 mnist = ["torch>=2.0", "torchvision>=0.15"]
-ocr = ["python-doctr[torch]>=0.11"]
+ocr = ["python-doctr>=1.0,<2"]
 
 [project.scripts]
 formvision = "formvision.cli:main"

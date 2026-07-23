@@ -47,8 +47,8 @@ La CLI expone este pipeline como `formvision process` o
 pipeline. Carga el layout y crea el pipeline una sola vez, procesa los diez
 scanned, los alinea contra `template/template.png`, compara QR y OMR con
 `ground_truth/` y genera `data/outputs/demo/report.json`. Continúa registrando
-errores por formulario. OCR e ICR se incluyen como resultados no evaluados; los
-adaptadores temporales de la demo se inyectan desde `demo/`, no desde el Core.
+errores por formulario. OCR e ICR se ejecutan con `DoctrOcrEngine` y
+`MnistDigitIcrEngine`, y se incluyen como resultados no evaluados.
 No hay reporte HTML ni visualizaciones de etapas en este hito.
 
 ## Adaptadores de extracción
@@ -61,9 +61,9 @@ No hay reporte HTML ni visualizaciones de etapas en este hito.
   construye un predictor docTR pretrained.
 
 Los adaptadores temporales `DemoOcrExtractor` y `DemoIcrExtractor` viven bajo
-`demo/omr_admission/extractors/`. `python demo.py` los inyecta para conservar la
-demostración actual, donde OCR e ICR no se evalúan; el Core no usa fallbacks
-simulados ni los incluye en el paquete distribuible. `FormProcessingPipeline`
+`demo/omr_admission/extractors/` hasta el Hito 3.3, pero `python demo.py` ya no
+los utiliza. El Core no usa fallbacks simulados ni los incluye en el paquete
+distribuible. `FormProcessingPipeline`
 requiere motores OCR/ICR configurados explícitamente
 cuando el layout contiene campos de esos tipos, y la CLI del Core solo ofrece
 MNIST para ICR y docTR para OCR.
@@ -105,5 +105,5 @@ el reporte HTML sigue siendo un hito posterior.
 - La evaluación actual de la demo compara QR y OMR con `ground_truth/`; OCR e ICR
   reales todavía no se evalúan en el lote completo.
 - `demo_value` y los extractores simulados temporales permanecen fuera del Core
-  para sostener la demo actual hasta el hito de motores reales.
+  hasta el Hito 3.3, aunque ya no sostienen la demo principal.
 - La visualización de imágenes intermedias y el reporte HTML aún no existen.
