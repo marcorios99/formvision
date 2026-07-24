@@ -30,7 +30,7 @@ def _template(field_type: str, field_id: str) -> FormTemplate:
         "template",
         2,
         2,
-        (FieldConfig(field_id, field_id, field_type, Rect(0, 0, 1, 1), demo_value="value"),),
+        (FieldConfig(field_id, field_id, field_type, Rect(0, 0, 1, 1)),),
     )
 
 
@@ -46,7 +46,7 @@ def test_pipeline_requires_icr_engine_for_icr_field() -> None:
 
 def test_pipeline_processes_field_with_explicit_engine() -> None:
     class Ocr:
-        def extract(self, roi, demo_value=None):
+        def extract(self, roi):
             return Extraction("recognized", 1.0, "fake_ocr")
 
     result = _pipeline(ocr_extractor=Ocr()).process("input.png", _template("ocr", "full_name"))

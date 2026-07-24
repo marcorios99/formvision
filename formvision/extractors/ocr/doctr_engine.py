@@ -43,7 +43,7 @@ class DoctrOcrEngine(OcrEngine):
                 assume_straight_pages=assume_straight_pages,
             )
 
-    def extract(self, roi, demo_value: str | None = None) -> Extraction:
+    def extract(self, roi) -> Extraction:
         rgb_roi = np.ascontiguousarray(roi[..., ::-1])
         result = self.predictor([rgb_roi])
         words: list[str] = []

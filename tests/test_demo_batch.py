@@ -13,12 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class FakeOcrEngine:
-    def extract(self, roi, demo_value=None) -> Extraction:
+    def extract(self, roi) -> Extraction:
         return Extraction(value="test ocr", confidence=0.9, source="doctr", metadata={"test": True})
 
 
 class FakeIcrEngine:
-    def extract(self, roi, demo_value=None) -> Extraction:
+    def extract(self, roi) -> Extraction:
         return Extraction(value="00000000", confidence=0.8, source="mnist_icr", metadata={"test": True})
 
 

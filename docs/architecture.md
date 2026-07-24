@@ -28,7 +28,7 @@ docs/          Contratos y recorridos documentales.
 4. `MagentaDropout` elimina las guías magenta de la imagen alineada.
 5. `BarcodeExtractor` intenta leer el QR.
 6. `TemplateLoader` convierte `layout.json` en un `FormTemplate`; cada field
-   contiene tipo, ROI, validadores, opciones y opcionalmente `demo_value`.
+   contiene tipo, ROI, validadores y opciones.
 7. `CoordinateMapper` recorta cada ROI con relación a `page_size`. Los fields se
    procesan en orden OMR, ICR y OCR.
 8. El extractor correspondiente produce valor, confianza, origen y metadata.
@@ -60,16 +60,11 @@ No hay reporte HTML ni visualizaciones de etapas en este hito.
 - **OCR**: requiere un motor configurado explícitamente; `DoctrOcrEngine`
   construye un predictor docTR pretrained.
 
-Los adaptadores temporales `DemoOcrExtractor` y `DemoIcrExtractor` viven bajo
-`demo/omr_admission/extractors/` hasta el Hito 3.3, pero `python demo.py` ya no
-los utiliza. El Core no usa fallbacks simulados ni los incluye en el paquete
-distribuible. `FormProcessingPipeline`
-requiere motores OCR/ICR configurados explícitamente
-cuando el layout contiene campos de esos tipos, y la CLI del Core solo ofrece
-MNIST para ICR y docTR para OCR.
-Los motores demo reciben el `demo_value` del field y lo devuelven como valor
-simulado. No inspeccionan la imagen para reconocer texto o escritura. Esto hace
-posible probar la orquestación sin instalar modelos.
+No existen adaptadores simulados ni fallbacks para OCR o ICR.
+`FormProcessingPipeline` requiere motores OCR/ICR configurados explícitamente
+cuando el layout contiene campos de esos tipos, y los invoca únicamente con el
+ROI. La CLI del Core solo ofrece MNIST para ICR y docTR para OCR. Los layouts
+describen la extracción; los valores conocidos permanecen en `ground_truth/`.
 
 ## Fronteras del proyecto
 
@@ -104,6 +99,7 @@ el reporte HTML sigue siendo un hito posterior.
 - La alineación está orientada a páginas sintéticas con marcas de referencia.
 - La evaluación actual de la demo compara QR y OMR con `ground_truth/`; OCR e ICR
   reales todavía no se evalúan en el lote completo.
-- `demo_value` y los extractores simulados temporales permanecen fuera del Core
-  hasta el Hito 3.3, aunque ya no sostienen la demo principal.
+- Los extractores simulados y los valores prefabricados fueron eliminados; la
+  demo usa exclusivamente motores reales. La evaluación completa de OCR/ICR
+  pertenece al Hito 3.4.
 - La visualización de imágenes intermedias y el reporte HTML aún no existen.

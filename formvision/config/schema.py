@@ -27,7 +27,6 @@ class FieldConfig:
     roi: Rect
     validators: tuple[str, ...] = ()
     options: tuple[str, ...] = ()
-    demo_value: Any = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "FieldConfig":
@@ -38,7 +37,6 @@ class FieldConfig:
             roi=Rect.from_dict(data["roi"]),
             validators=tuple(data.get("validators", [])),
             options=tuple(data.get("options", [])),
-            demo_value=data.get("demo_value"),
         )
 
 

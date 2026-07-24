@@ -326,7 +326,6 @@ class SyntheticOmrSheetFactory:
                     "type": field_type,
                     "roi": {"x": x, "y": y, "width": width, "height": height},
                     "validators": validators,
-                    "demo_value": values[field_id],
                 }
             )
         return fields

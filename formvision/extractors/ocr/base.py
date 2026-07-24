@@ -7,5 +7,5 @@ class OcrEngine(ABC):
     """Contract for OCR engines that read printed text from an ROI."""
 
     @abstractmethod
-    def extract(self, roi, demo_value: str | None = None) -> Extraction:
+    def extract(self, roi) -> Extraction:
         raise NotImplementedError

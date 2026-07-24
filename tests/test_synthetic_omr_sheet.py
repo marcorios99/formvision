@@ -4,6 +4,9 @@ from pathlib import Path
 from synthetic.synthetic_templates import SyntheticOmrSheetFactory
 
 
+SIMULATED_VALUE_KEY = "demo" + "_value"
+
+
 def test_synthetic_omr_sheet_generates_image_and_layout(tmp_path: Path):
     image_path = tmp_path / "sheet.png"
     layout_path = tmp_path / "sheet.json"
@@ -23,3 +26,4 @@ def test_synthetic_omr_sheet_generates_image_and_layout(tmp_path: Path):
     assert layout["template_id"] == "synthetic_omr_v1"
     assert len(layout["fields"]) == 10
     assert layout["fields"][-1]["type"] == "omr"
+    assert all(SIMULATED_VALUE_KEY not in field for field in layout["fields"])

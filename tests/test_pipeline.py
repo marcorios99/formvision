@@ -1,9 +1,19 @@
 from pathlib import Path
 
-from demo.omr_admission.extractors import DemoIcrExtractor, DemoOcrExtractor
+from formvision.extractors.base import Extraction
 from synthetic.synthetic_templates import SyntheticOmrSheetFactory
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
+
+
+class FakeOcrEngine:
+    def extract(self, roi):
+        return Extraction("recognized text", 1.0, "fake_ocr")
+
+
+class FakeIcrEngine:
+    def extract(self, roi):
+        return Extraction("12345678", 1.0, "fake_icr")
 
 
 def test_pipeline_processes_synthetic_form(tmp_path: Path):
@@ -17,8 +27,8 @@ def test_pipeline_processes_synthetic_form(tmp_path: Path):
     template = TemplateLoader().load(layout_path)
 
     result = FormProcessingPipeline(
-        ocr_extractor=DemoOcrExtractor(),
-        icr_extractor=DemoIcrExtractor(),
+        ocr_extractor=FakeOcrEngine(),
+        icr_extractor=FakeIcrEngine(),
     ).process(image_path, template)
 
     assert result.document_id
@@ -51,8 +61,8 @@ def test_pipeline_aligns_to_template_before_extraction(tmp_path: Path):
     template = TemplateLoader().load(input_layout)
 
     result = FormProcessingPipeline(
-        ocr_extractor=DemoOcrExtractor(),
-        icr_extractor=DemoIcrExtractor(),
+        ocr_extractor=FakeOcrEngine(),
+        icr_extractor=FakeIcrEngine(),
     ).process(
         input_image,
         template,

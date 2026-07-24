@@ -9,5 +9,5 @@ class IcrEngine(ABC):
     """Interface for handwritten field recognizers."""
 
     @abstractmethod
-    def extract(self, roi: np.ndarray, demo_value: str | None = None) -> Extraction:
+    def extract(self, roi: np.ndarray) -> Extraction:
         raise NotImplementedError

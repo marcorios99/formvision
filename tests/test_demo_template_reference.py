@@ -1,13 +1,23 @@
 import json
 from pathlib import Path
 
-from demo.omr_admission.extractors import DemoIcrExtractor, DemoOcrExtractor
+from formvision.extractors.base import Extraction
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = ROOT / "demo" / "omr_admission"
+
+
+class FakeOcrEngine:
+    def extract(self, roi):
+        return Extraction("recognized text", 1.0, "fake_ocr")
+
+
+class FakeIcrEngine:
+    def extract(self, roi):
+        return Extraction("00000000", 1.0, "fake_icr")
 
 
 def test_scanned_demo_uses_template_reference_and_ground_truth_omr_answers() -> None:
@@ -21,8 +31,8 @@ def test_scanned_demo_uses_template_reference_and_ground_truth_omr_answers() -> 
 
     template = TemplateLoader().load(layout_path)
     result = FormProcessingPipeline(
-        ocr_extractor=DemoOcrExtractor(),
-        icr_extractor=DemoIcrExtractor(),
+        ocr_extractor=FakeOcrEngine(),
+        icr_extractor=FakeIcrEngine(),
     ).process(
         scanned_image,
         template,

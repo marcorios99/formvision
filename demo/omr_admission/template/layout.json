@@ -18,8 +18,7 @@
       "validators": [
         "required",
         "digits:8"
-      ],
-      "demo_value": ""
+      ]
     },
     {
       "id": "full_name",
@@ -33,8 +32,7 @@
       },
       "validators": [
         "required"
-      ],
-      "demo_value": ""
+      ]
     },
     {
       "id": "exam_date",
@@ -48,8 +46,7 @@
       },
       "validators": [
         "required"
-      ],
-      "demo_value": ""
+      ]
     },
     {
       "id": "signature",
@@ -61,8 +58,7 @@
         "width": 635,
         "height": 68
       },
-      "validators": [],
-      "demo_value": ""
+      "validators": []
     },
     {
       "id": "question_01",

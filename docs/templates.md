@@ -41,7 +41,9 @@ Cada field puede definir:
 - `roi`: `{x, y, width, height}` en coordenadas de la página;
 - `validators`: reglas como `required`, `digits:8` o `single_choice`;
 - `options`: opciones OMR;
-- `demo_value`: valor usado por los motores simulados.
+
+El layout no contiene resultados prefabricados: OCR e ICR reciben solamente el
+ROI. Los valores conocidos de las muestras se conservan en `ground_truth/`.
 
 ## Campos y ROI
 

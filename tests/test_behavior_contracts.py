@@ -1,16 +1,24 @@
+import importlib
+import inspect
 import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from formvision.config.schema import FieldConfig, FormTemplate, Rect
 from formvision.exporters.json_exporter import JsonExporter
 from formvision.extractors.base import Extraction
+from formvision.extractors.icr.mnist_engine import MnistDigitIcrEngine
+from formvision.extractors.ocr.doctr_engine import DoctrOcrEngine
 from formvision.image_processing.page_frame_normalizer import FrameNormalizationResult
 from formvision.layout.coordinate_mapper import CoordinateMapper
 from formvision.layout.template_loader import TemplateLoader
 from formvision.pipeline.processor import FormProcessingPipeline
 from formvision.pipeline.result_models import BarcodeResult, FieldResult, FormProcessingResult
+
+
+SIMULATED_VALUE_KEY = "demo" + "_value"
 
 
 def test_template_loader_converts_layout_json_to_schema_objects(tmp_path: Path) -> None:
@@ -27,7 +35,6 @@ def test_template_loader_converts_layout_json_to_schema_objects(tmp_path: Path) 
                         "roi": {"x": 10, "y": 20, "width": 30, "height": 40},
                         "validators": ["required", "digits:8"],
                         "options": ["unused"],
-                        "demo_value": "12345678",
                     }
                 ],
             }
@@ -49,10 +56,10 @@ def test_template_loader_converts_layout_json_to_schema_objects(tmp_path: Path) 
                 roi=Rect(x=10, y=20, width=30, height=40),
                 validators=("required", "digits:8"),
                 options=("unused",),
-                demo_value="12345678",
             ),
         ),
     )
+    assert not hasattr(template.fields[0], SIMULATED_VALUE_KEY)
 
 
 def test_coordinate_mapper_scales_and_crops_field_roi() -> None:
@@ -104,22 +111,22 @@ def test_pipeline_aligns_to_supplied_template_and_dispatches_fields_in_type_orde
             return Extraction("B", 0.9, "fake_omr")
 
     class Icr:
-        def extract(self, roi, demo_value=None):
-            calls.append(("icr", demo_value, roi))
-            return Extraction(demo_value, 0.8, "fake_icr")
+        def extract(self, roi):
+            calls.append(("icr", roi))
+            return Extraction("123", 0.8, "fake_icr")
 
     class Ocr:
-        def extract(self, roi, demo_value=None):
-            calls.append(("ocr", demo_value, roi))
-            return Extraction(demo_value, 0.7, "fake_ocr")
+        def extract(self, roi):
+            calls.append(("ocr", roi))
+            return Extraction("printed", 0.7, "fake_ocr")
 
     template = FormTemplate(
         "fallback-template",
         8,
         6,
         (
-            FieldConfig("z_ocr", "OCR", "ocr", Rect(0, 0, 1, 1), demo_value="printed"),
-            FieldConfig("a_icr", "ICR", "icr", Rect(0, 0, 1, 1), demo_value="123"),
+            FieldConfig("z_ocr", "OCR", "ocr", Rect(0, 0, 1, 1)),
+            FieldConfig("a_icr", "ICR", "icr", Rect(0, 0, 1, 1)),
             FieldConfig("b_omr", "OMR", "omr", Rect(0, 0, 1, 1), options=("A", "B")),
         ),
     )
@@ -140,11 +147,9 @@ def test_pipeline_aligns_to_supplied_template_and_dispatches_fields_in_type_orde
         ("load", "input.png"),
         ("load", "template.png"),
     ]
-    assert [call[:2] for call in calls if call[0] in {"omr", "icr", "ocr"}] == [
-        ("omr", "b_omr"),
-        ("icr", "123"),
-        ("ocr", "printed"),
-    ]
+    extraction_calls = [call for call in calls if call[0] in {"omr", "icr", "ocr"}]
+    assert [call[0] for call in extraction_calls] == ["omr", "icr", "ocr"]
+    assert extraction_calls[0][1] == "b_omr"
     assert all(call[-1] is aligned_image for call in calls if call[0] in {"omr", "icr", "ocr"})
     assert result.document_id == "document-7"
     assert result.template_id == "template-7"
@@ -152,6 +157,26 @@ def test_pipeline_aligns_to_supplied_template_and_dispatches_fields_in_type_orde
     assert result.fields["b_omr"].value == "B"
     assert result.metadata["aligned"] is True
     assert result.metadata["template_image_path"] == "template.png"
+
+
+def test_public_layout_has_no_simulated_values_or_extractors() -> None:
+    root = Path(__file__).resolve().parents[1]
+    data = json.loads(
+        (root / "demo" / "omr_admission" / "template" / "layout.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert all(SIMULATED_VALUE_KEY not in field for field in data["fields"])
+    with pytest.raises(ModuleNotFoundError):
+        importlib.import_module("demo.omr_admission.extractors.ocr")
+    with pytest.raises(ModuleNotFoundError):
+        importlib.import_module("demo.omr_admission.extractors.icr")
+
+
+def test_real_engines_expose_single_roi_contract() -> None:
+    assert list(inspect.signature(DoctrOcrEngine.extract).parameters) == ["self", "roi"]
+    assert list(inspect.signature(MnistDigitIcrEngine.extract).parameters) == ["self", "roi"]
 
 
 def test_pipeline_includes_validation_issues_in_result() -> None:
@@ -168,7 +193,7 @@ def test_pipeline_includes_validation_issues_in_result() -> None:
             return Extraction(None, 0.0, "fake_qr")
 
     class Ocr:
-        def extract(self, roi, demo_value=None):
+        def extract(self, roi):
             return Extraction("", 0.5, "fake_ocr")
 
     template = FormTemplate(

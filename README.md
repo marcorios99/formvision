@@ -19,9 +19,8 @@ precisión productiva ni modelos privados.
   segmentación y un modelo pequeño basado en MNIST.
 
 El pipeline también incluye validación y exportación JSON, CSV o SQLite. El
-Core requiere motores OCR e ICR configurados explícitamente; los adaptadores
-simulados temporales viven bajo `demo/omr_admission/extractors/` y no forman
-parte de FormVision distribuible.
+Core requiere motores OCR e ICR configurados explícitamente: los extractores
+reciben únicamente el ROI y no existen adaptadores simulados.
 
 ## Estado actual
 
@@ -39,7 +38,7 @@ template.png
 → lote de formularios scanned
 → alineamiento contra la plantilla
 → extracción QR / OCR / ICR / OMR
-→ comparación con expected
+→ comparación con ground_truth
 → reporte JSON de evaluación
 ```
 
@@ -96,9 +95,9 @@ python -m formvision.cli process \
 ```
 
 Un layout que solo contenga QR/OMR puede procesarse sin esos flags. La demo
-`python demo.py` configura los motores reales; los adaptadores simulados
-temporales permanecen en el repositorio hasta el Hito 3.3, pero no se usan en
-el recorrido principal. El resultado de la CLI
+`python demo.py` configura exclusivamente los motores reales. Los layouts
+describen las ROIs y reglas de extracción; los valores conocidos permanecen en
+`ground_truth/`. El resultado de la CLI
 contiene QR, fields, confianza, validaciones y metadata, pero no se compara automáticamente con
 `demo/omr_admission/ground_truth/student_001.json`.
 

@@ -30,7 +30,7 @@ class MnistDigitIcrEngine(IcrEngine):
         self.sample_labels = data["sample_labels"].astype(str) if "sample_labels" in data else self.labels
         self.segmenter = segmenter or DigitSegmenter()
 
-    def extract(self, roi, demo_value: str | None = None) -> Extraction:
+    def extract(self, roi) -> Extraction:
         candidates = self.segmenter.segment(roi)
         if not candidates:
             return Extraction(value="", confidence=0.0, source="mnist_icr")

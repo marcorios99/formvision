@@ -66,17 +66,13 @@ junto con `MnistDigitIcrEngine`; antes de ejecutarla se debe preparar el modelo
 ICR con `python training/train_mnist_digit.py` e instalar el extra `ocr`. El
 primer uso de docTR puede descargar pesos al caché configurado.
 
-## Motores simulados
+## Contrato de extracción
 
-`DemoOcrExtractor` y `DemoIcrExtractor` viven temporalmente en
-`demo/omr_admission/extractors/`. Implementan las interfaces de OCR e ICR sin
-reconocer la imagen. Reciben `demo_value` desde el field del layout y lo
-devuelven; si el valor es `None`, usan valores de ejemplo predeterminados.
-
-Permanecen temporalmente para el Hito 3.3, pero la demostración principal ya no
-los inyecta. El pipeline y la CLI del Core no tienen fallback simulado: los
-campos OCR/ICR requieren motores reales configurados. Los resultados reales de
-la demo todavía no se utilizan para medir OCR/ICR.
+Los motores OCR e ICR reciben únicamente el ROI mediante `extract(roi)`. No
+existen motores simulados ni valores prefabricados en los layouts. El pipeline
+y la CLI del Core no tienen fallback: los campos OCR/ICR requieren motores
+reales configurados. Los resultados reales de la demo todavía no se utilizan
+para medir OCR/ICR; esa evaluación completa pertenece al Hito 3.4.
 
 ## Separación de responsabilidades
 

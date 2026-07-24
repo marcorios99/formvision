@@ -128,14 +128,14 @@ class FormProcessingPipeline:
                     f"ICR engine is required for field '{field.id}'. "
                     "Configure FormProcessingPipeline(icr_extractor=...)."
                 )
-            return self.icr_extractor.extract(roi, field.demo_value)
+            return self.icr_extractor.extract(roi)
         if field.type == "ocr":
             if self.ocr_extractor is None:
                 raise RuntimeError(
                     f"OCR engine is required for field '{field.id}'. "
                     "Configure FormProcessingPipeline(ocr_extractor=...)."
                 )
-            return self.ocr_extractor.extract(roi, field.demo_value)
+            return self.ocr_extractor.extract(roi)
         raise ValueError(f"Unsupported field type: {field.type}")
 
     def _parse_barcode(self, value: str | None) -> tuple[str | None, str | None]:
